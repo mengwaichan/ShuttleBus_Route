@@ -17,6 +17,7 @@ class BusRoutes:
         self.streetname = streetname
         self.distance = None
         self.duration = None
+        self.polyline = None
         self.w125 = False # if true it passed w125, false is heading to w125
         self.w145 = False 
         self.nextStop = None
@@ -33,8 +34,12 @@ class BusRoutes:
 
         self.distance = response_data['routes'][0]['distanceMeters'] 
         self.duration = response_data['routes'][0]['duration']
+        self.polyline = response_data['routes'][0]['polyline']['encodedPolyline']
 
-    def get_nextStop(self):
+    def get_nextStop(self, prev = None):
+        if prev:
+            self.w145 = prev.w145
+            self.w125 = prev.w125
         if not self.streetaddress:
             self.streetaddress = 0
         if not self.streetname:
@@ -75,5 +80,6 @@ class BusRoutes:
             "streetName" : self.streetname,
             "distance" : self.distance,
             "duration" : self.duration,
+            "polyline" : self.polyline,
             "nextStop" : stop
         }

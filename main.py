@@ -20,7 +20,8 @@ with open(output_file, 'w', newline='') as csv_file:
          'streetname', 
          'distance', 
          'duration',
-         'nextStop'])  
+         'nextStop',
+         'polyline'])  
 
     route = BusRoutes(
             locations[0].dateTime, 
@@ -44,7 +45,8 @@ with open(output_file, 'w', newline='') as csv_file:
              route.streetname, 
              route.distance,
              route.duration,
-             route.nextStop.getName()])
+             route.nextStop.getName(),
+             route.polyline])
     
     prev = route
 
@@ -60,7 +62,7 @@ with open(output_file, 'w', newline='') as csv_file:
         )
         
         route.getLastDest(prev)
-        route.get_nextStop()
+        route.get_nextStop(prev)
         route.fetchRoute()
 
         prev = route
@@ -74,4 +76,5 @@ with open(output_file, 'w', newline='') as csv_file:
              route.streetname, 
              route.distance,
              route.duration,
-             route.nextStop.getName()])
+             route.nextStop.getName(),
+             route.polyline])
