@@ -1,0 +1,4 @@
+# ignore all .csv file
+__pycache__/
+*.csv
+Constants.py
