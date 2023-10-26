@@ -5,7 +5,9 @@ class Route:
     def __init__(self):
         self.api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
         self.api_key = Constants.route_api_key
-        self.headers = {"Content-Type": "application/json", "X-Goog-Api-Key":self.api_key,"X-Goog-FieldMask":"routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline"}
+        self.headers = {"Content-Type": "application/json", 
+                        "X-Goog-Api-Key":self.api_key,
+                        "X-Goog-FieldMask":"routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline"}
 
     def getRoute(self, originLat, originLng, destLat, destLng, intermediatesLat=None, intermediatesLng=None):
         route_request = {"origin": {
