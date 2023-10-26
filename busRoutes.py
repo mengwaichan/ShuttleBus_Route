@@ -29,7 +29,6 @@ class BusRoutes:
         destlat = self.nextStop.getLat()
         destlng = self.nextStop.getLng()
 
-
         response_data = bus_route.getRoute(self.lat, self.lng, destlat, destlng)
 
         self.distance = response_data['routes'][0]['distanceMeters'] 
@@ -45,12 +44,12 @@ class BusRoutes:
         if not self.streetname:
             self.streetname = ""
 
-        if int(self.streetaddress) >= 690 and self.streetname == "St Nicholas Ave": #145
+        if (int(self.streetaddress) >= 650 and self.streetname == "St Nicholas Ave") or self.streetname == "W 145": #145
             self.w145 = True
             self.w125 = False
             self.nextStop = nac
             return
-        if int(self.streetaddress) < 210 and self.streetname == "Convent Ave": # CCNY
+        if  150 <= int(self.streetaddress) <= 250  and self.streetname == "Convent Ave": # CCNY
             if self.w145: # going to w125
                 self.nextStop = w125
                 self.intermediate = intermediate
@@ -58,7 +57,7 @@ class BusRoutes:
             else: # going to w145
                 self.nextStop = w145
                 return
-        if int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave": #125
+        if (int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or self.streetname == "W 125": #125
             self.w145 = False
             self.w125 = True
             self.nextStop = nac
