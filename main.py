@@ -34,6 +34,7 @@ with open(output_file, 'w', newline='') as csv_file:
         )
     route.get_nextStop()
     route.fetchRoute()
+    route.deleteIntermediate()
 
     writer.writerow(
             [route.datetime, 
@@ -64,6 +65,7 @@ with open(output_file, 'w', newline='') as csv_file:
         route.getLastDest(prev)
         route.get_nextStop(prev)
         route.fetchRoute()
+        route.deleteIntermediate()
 
         prev = route
         writer.writerow(
