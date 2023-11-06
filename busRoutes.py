@@ -7,12 +7,11 @@ w125 = busStop.BusStop(3, "W125", 40.8103721597239, -73.95278450679731, 284, "St
 intermediate_to_125 = busStop.BusStop(4, "intermediate_125", 40.810976077358795, -73.95405670678701)
 intermediate_to_nac = busStop.BusStop(5, "intermediate_nac", 40.811255, -73.953659)
 class BusRoutes:
-    def __init__(self, datetime, name, serialnumber, lat, lng, streetaddress, streetname):
+    def __init__(self, datetime, name, lat, lng, streetaddress, streetname):
 
         # Data from Airtags
         self.datetime = datetime
         self.name = name
-        self.serialnumber = serialnumber
         self.lat = lat
         self.lng = lng
         self.streetaddress = streetaddress
@@ -75,7 +74,9 @@ class BusRoutes:
             self.intermediate = intermediate_to_nac
             return
         
-    def getLastDest(self, route):
+    def getLastDest(self, route = None):
+        if not route:
+            return
         self.nextStop = route.nextStop
         self.intermediate = route.intermediate
 
@@ -87,7 +88,6 @@ class BusRoutes:
         return {
             "datetime":self.datetime,
             "name":self.name,
-            "serialnumber":self.serialnumber,
             "lat" :self.lat,
             "lng" :self.lng,
             "streetAddress" : self.streetaddress,
