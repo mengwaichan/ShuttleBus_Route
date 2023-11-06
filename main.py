@@ -3,8 +3,8 @@ from busRoutes import BusRoutes
 import csv
 
 locations = Airtags.get_airtag()
-
 output_file = "route_data.csv"
+
 with open(output_file, 'w', newline='') as csv_file:
     # Define the CSV writer
     writer = csv.writer(csv_file)
@@ -13,7 +13,6 @@ with open(output_file, 'w', newline='') as csv_file:
     writer.writerow(
         ['datetime', 
          'name', 
-         'serialnumber', 
          'latitude', 
          'longitude', 
          'streetaddress', 
@@ -22,40 +21,12 @@ with open(output_file, 'w', newline='') as csv_file:
          'duration',
          'nextStop',
          'polyline'])  
-
-    route = BusRoutes(
-            locations[0].dateTime, 
-            locations[0].name, 
-            locations[0].serialNumber,
-            locations[0].locationLatitude,
-            locations[0].locationLongitude,
-            locations[0].addressStreetAddress,
-            locations[0].addressStreetName
-        )
-    route.get_nextStop()
-    route.fetchRoute()
-    route.deleteIntermediate()
-
-    writer.writerow(
-            [route.datetime, 
-             route.name, 
-             route.serialnumber, 
-             route.lat, 
-             route.lng, 
-             route.streetaddress, 
-             route.streetname, 
-             route.distance,
-             route.duration,
-             route.nextStop.getName(),
-             route.polyline])
     
-    prev = route
-
-    for i in range(1,len(locations)):
+    prev = None
+    for i in range(len(locations)):
         route = BusRoutes(
             locations[i].dateTime, 
             locations[i].name, 
-            locations[i].serialNumber,
             locations[i].locationLatitude,
             locations[i].locationLongitude,
             locations[i].addressStreetAddress,
@@ -71,7 +42,6 @@ with open(output_file, 'w', newline='') as csv_file:
         writer.writerow(
             [route.datetime, 
              route.name, 
-             route.serialnumber, 
              route.lat, 
              route.lng, 
              route.streetaddress, 
