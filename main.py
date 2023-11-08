@@ -2,7 +2,7 @@ from getairtag import Airtags
 from busRoutes import BusRoutes
 import csv
 
-def processShuttleBus(name):
+def processShuttleBus(name, prevShuttle):
     locations = Airtags.get_airtag(name)
     output_file = f"{name.replace(' ', '_')}_route_data.csv"
 
@@ -22,9 +22,9 @@ def processShuttleBus(name):
             'duration',
             'nextStop',
             'polyline'])  
-    
-        prev = None
+
         for i in range(len(locations)):
+            prev = prevShuttle[name]
             route = BusRoutes(
                 locations[i].dateTime.strip(), 
                 locations[i].name.strip(), 
@@ -39,7 +39,7 @@ def processShuttleBus(name):
             route.fetchRoute()
             route.deleteIntermediate()
 
-            prev = route
+            prev_shuttle[name] = route
             writer.writerow(
                 [route.datetime, 
                 route.name, 
@@ -52,6 +52,7 @@ def processShuttleBus(name):
                 route.nextStop.getName(),
                 route.polyline])
 
+prev_shuttle = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None, }
 shuttleBuses = ["CCNY Shuttle 1", "CCNY Shuttle 2", "CCNY Shuttle 3"]
 for shuttleBus in shuttleBuses:
-    processShuttleBus(shuttleBus)
+    processShuttleBus(shuttleBus, prev_shuttle)
