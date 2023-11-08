@@ -1,7 +1,12 @@
 from getairtag import Airtags
 from busRoutes import BusRoutes
 import csv
+import time
+import os
 
+def is_csv_Updated(filePath, lastCheck):
+    curr = os.path.getmtime(filePath)
+    return curr > lastCheck
 def processShuttleBus(name, prevShuttle):
     locations = Airtags.get_airtag(name)
     output_file = f"{name.replace(' ', '_')}_route_data.csv"
@@ -54,5 +59,12 @@ def processShuttleBus(name, prevShuttle):
 
 prev_shuttle = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None, }
 shuttleBuses = ["CCNY Shuttle 1", "CCNY Shuttle 2", "CCNY Shuttle 3"]
-for shuttleBus in shuttleBuses:
-    processShuttleBus(shuttleBus, prev_shuttle)
+
+lastCheck = os.path.getmtime("airtags.csv")
+
+while True:
+    if is_csv_Updated("airtags.csv", lastCheck):
+        lastCheck = os.path.getatime("airtags.csv")
+        for shuttleBus in shuttleBuses:
+            processShuttleBus(shuttleBus, prev_shuttle)
+    time.sleep(60)
