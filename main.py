@@ -25,12 +25,12 @@ with open(output_file, 'w', newline='') as csv_file:
     prev = None
     for i in range(len(locations)):
         route = BusRoutes(
-            locations[i].dateTime, 
-            locations[i].name, 
-            locations[i].locationLatitude,
-            locations[i].locationLongitude,
-            locations[i].addressStreetAddress,
-            locations[i].addressStreetName
+            locations[i].dateTime.strip(), 
+            locations[i].name.strip(), 
+            float(locations[i].locationLatitude.strip()),
+            float(locations[i].locationLongitude.strip()),
+            locations[i].addressStreetAddress.strip(),
+            locations[i].addressStreetName.strip()
         )
         
         route.getLastDest(prev)

@@ -49,7 +49,7 @@ class Route:
 
 #fetchRoute = Route()
 
-#response_data = fetchRoute.getRoute(40.8103721597239, -73.95278450679731, 40.819557163853155, -73.94991793531442)
+#response_data = fetchRoute.getRoute(40.820043999999996, -73.949822100000006, 40.82377614314247, -73.94502568555461)
 #print(response_data)
 
 
