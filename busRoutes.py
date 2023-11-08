@@ -70,7 +70,7 @@ class BusRoutes:
             else: # going to w145
                 self.nextStop = w145
                 return
-        if (int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or self.streetname == "W 125th St" or self.streetname == "W 124th St" or self.streetname == "Manhattan Ave": #125
+        if (int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or (self.streetname == "W 125th St" and int(self.streetaddress) < 400) or self.streetname == "W 124th St" or self.streetname == "Manhattan Ave": #125
             self.w145 = False
             self.w125 = True
             self.nextStop = nac
