@@ -12,41 +12,21 @@ class Airtags:
             next(reader)
 
             for _, line in enumerate(reader):
-                latitude = line[10]
-                longitude = line[11]
+                latitude = line[4]
+                longitude = line[5]
                 if (latitude, longitude) != (prev_latitude, prev_longitude) or _ == 0:
                     air_tag.append(
                         airtag.AirTag(
                             dateTime = line[0],
                             name = line[1],
-                            serialNumber = line[2],
-                            productType = line[3],
-                            productIndentifier = line[4],
-                            vendorIdentifier = line[5],
-                            antennaPower = line[6],
-                            systemVersion = line[7],
-                            batteryStatus = line[8],
-                            locationPostionType = line[9],
-                            locationLatitude = line[10],
-                            locationLongitude = line[11],
-                            locationTimestamp = line[12],
-                            locationVerticalAccuracy = line[13],
-                            locationHorizontalAccuracy = line[14],
-                            locationFloorLevel = line[15],
-                            locationAltitude = line[16],
-                            locationIsInAccurate = line[17],
-                            locationIsOld = line[18],
-                            locationFinished = line[19],
-                            addressLabel = line[20],
-                            addressStreetAddress = line[21],
-                            addressCountryCode = line[22],
-                            addressStateCode = line[23],
-                            addressAdministrativeArea = line[24],
-                            addressStreetName = line[25],
-                            addressLocality = line[26],
-                            addressCountry = line[27],
-                            addressAreaOfInterestA = line[28],
-                            addressAreaOfInterestB= line[29]
+                            batteryStatus = line[2],
+                            locationPostionType = line[3],
+                            locationLatitude = line[4],
+                            locationLongitude = line[5],
+                            addressStreetAddress = line[6],
+                            addressStreetName = line[7],
+                            addressAreaOfInterestA = line[8],
+                            addressAreaOfInterestB= line[9]
                     )
                     
 

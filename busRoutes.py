@@ -46,20 +46,23 @@ class BusRoutes:
         self.polyline = response_data['routes'][0]['polyline']['encodedPolyline']
 
     def get_nextStop(self, prev = None):
+    
         if prev:
             self.w145 = prev.w145
             self.w125 = prev.w125
-        if not self.streetaddress:
+        if not self.streetaddress or self.streetaddress == ' ':
             self.streetaddress = 0
-        if not self.streetname:
+        if not self.streetname or self.streetname == ' ':
             self.streetname = ""
-
+        if type(self.streetaddress) == str and "–" in self.streetaddress:
+            self.streetaddress = int(self.streetaddress.split('–')[0])
+            
         if (int(self.streetaddress) >= 630 and self.streetname == "St Nicholas Ave") or self.streetname == "W 145th St" or self.streetname == "W 141st St": #145
             self.w145 = True
             self.w125 = False
             self.nextStop = nac
             return
-        if  150 <= int(self.streetaddress) <= 250  and self.streetname == "Convent Ave": # CCNY
+        if  (int(self.streetaddress) == 0 or 150 <= int(self.streetaddress) <= 250)  and self.streetname == "Convent Ave": # CCNY
             if self.w145: # going to w125
                 self.nextStop = w125
                 self.intermediate = intermediate_to_125
@@ -67,7 +70,7 @@ class BusRoutes:
             else: # going to w145
                 self.nextStop = w145
                 return
-        if (int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or self.streetname == "W 125th St" or self.streetname == "W 124th St": #125
+        if (int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or self.streetname == "W 125th St" or self.streetname == "W 124th St" or self.streetname == "Manhattan Ave": #125
             self.w145 = False
             self.w125 = True
             self.nextStop = nac
