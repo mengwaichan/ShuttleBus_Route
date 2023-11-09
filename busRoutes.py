@@ -1,13 +1,15 @@
 import busStop
 from route import Route
+from geocoding import Geocoding
 
 w145 = busStop.BusStop(1, "W145", 40.82377614314247, -73.94502568555461, 691, "St Nicholas Ave") #691 St Nicholas Ave
 nac = busStop.BusStop(2, "NAC", 40.819557163853155, -73.94991793531442, 201, "Convent Ave") # 201 The City College of New York
 w125 = busStop.BusStop(3, "W125", 40.8103721597239, -73.95278450679731, 284, "St Nicholas Ave") # 284 St Nicholas Ave # W 124th St
 intermediate_to_125 = busStop.BusStop(4, "intermediate_125", 40.810976077358795, -73.95405670678701)
 intermediate_to_nac = busStop.BusStop(5, "intermediate_nac", 40.811255, -73.953659)
+
 class BusRoutes:
-    def __init__(self, datetime, name, lat, lng, streetaddress, streetname):
+    def __init__(self, datetime, name, lat, lng, streetaddress, streetname, interestA):
 
         # Data from Airtags
         self.datetime = datetime
@@ -16,6 +18,7 @@ class BusRoutes:
         self.lng = lng
         self.streetaddress = streetaddress
         self.streetname = streetname
+        self.interestA = interestA
 
         # Data from Google Route API
         self.distance = None
@@ -41,23 +44,30 @@ class BusRoutes:
         else:
             response_data = bus_route.getRoute(self.lat, self.lng, destlat, destlng)
 
-        self.distance = response_data['routes'][0]['distanceMeters'] 
-        self.duration = response_data['routes'][0]['duration']
-        self.polyline = response_data['routes'][0]['polyline']['encodedPolyline']
+        try:
+            self.distance = response_data['routes'][0]['distanceMeters']
+        except (KeyError, IndexError):
+            self.distance = None
+
+        try:
+            self.duration = response_data['routes'][0]['duration']
+        except (KeyError, IndexError):
+            self.duration = None
+
+        try:
+            self.polyline = response_data['routes'][0]['polyline']['encodedPolyline']
+        except (KeyError, IndexError):
+            self.polyline = None
 
     def get_nextStop(self, prev = None):
-    
+        self.checkData()
+        self.adjustOrigin()
+          
         if prev:
             self.w145 = prev.w145
             self.w125 = prev.w125
-        if not self.streetaddress or self.streetaddress == ' ':
-            self.streetaddress = 0
-        if not self.streetname or self.streetname == ' ':
-            self.streetname = ""
-        if type(self.streetaddress) == str and "–" in self.streetaddress:
-            self.streetaddress = int(self.streetaddress.split('–')[0])
-            
-        if (int(self.streetaddress) >= 630 and self.streetname == "St Nicholas Ave") or self.streetname == "W 145th St" or self.streetname == "W 141st St": #145
+
+        if (int(self.streetaddress) >= 630 and self.streetname == "St Nicholas Ave") or (self.streetname == "W 145th St" and 410 < int(self.streetaddress)) or self.streetname == "W 141st St": #145
             self.w145 = True
             self.w125 = False
             self.nextStop = nac
@@ -76,7 +86,45 @@ class BusRoutes:
             self.nextStop = nac
             self.intermediate = intermediate_to_nac
             return
-        
+        if self.interestA == "The City College of New York" and self.streetadderss = "":
+            if self.w145: # going to w125
+                self.nextStop = w125
+                self.intermediate = intermediate_to_125
+                return
+            else: # going to w145
+                self.nextStop = w145
+                return
+    
+    def adjustOrigin(self):
+        if self.streetname == "Hamilton Terr":
+            self.lat = 40.821713 
+            self.lng = -73.947070
+            self.streetname = "W 141st St"
+            self.streetaddress = 428
+            return
+        if self.streetname == "Amsterdam Ave" and 1510 <= int(self.streetaddress) <= 1617:
+            self.lat = 40.8198374
+            self.lng = -73.9505743
+            self.streetname = "Convnet Ave"
+            self.streetaddress = 160
+            return
+        if self.streetname == "Amsterdam Ave" and 1360 < int(self.streetaddress) < 1510:
+            newCord = Geocoding()
+            res = newCord.fetchLatLng(int(self.streetaddress) - 1360, "Convnet Ave")
+            self.lat = res['lat']
+            self.lng = res['lng']
+            self.streetname = "Convnet Ave"
+            self.streetaddress = int(self.streetaddress) - 1360
+            return
+
+    def checkData(self):
+        if not self.streetaddress or self.streetaddress == ' ':
+            self.streetaddress = 0
+        if not self.streetname or self.streetname == ' ':
+            self.streetname = ""
+        if type(self.streetaddress) == str and "–" in self.streetaddress:
+            self.streetaddress = int(self.streetaddress.split('–')[0])
+
     def getLastDest(self, route = None):
         if not route:
             return
