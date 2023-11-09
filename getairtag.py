@@ -5,12 +5,11 @@ class Airtags:
     def get_airtag(shuttleBus, prev_location):
         air_tag = []
 
-        prev_latitude, prev_longitude = None, None
+        prev_address, prev_name = "", ""
         location = None
         if prev_location[shuttleBus]:
-            prev_latitude = prev_location[shuttleBus].getLat()
-            prev_longitude = prev_location[shuttleBus].getLng()
-            print(prev_latitude, prev_longitude, prev_location[shuttleBus].name)
+            prev_address = prev_location[shuttleBus].getAddress()
+            prev_name = prev_location[shuttleBus].getName()
 
         with open("Airtags.csv", encoding="utf-8") as file:
             reader = csv.reader(file, delimiter=",")
@@ -19,9 +18,9 @@ class Airtags:
             for _, line in enumerate(reader):
                 name = line[1]
                 if name == shuttleBus:
-                    latitude = line[4]
-                    longitude = line[5]
-                    if (latitude, longitude) != (prev_latitude, prev_longitude) or _ == 0:
+                    streetAddress = line[6]
+                    streetName = line[7]
+                    if (streetAddress, streetName) != (prev_address, prev_name):
                         location = airtag.AirTag(
                                 dateTime = line[0],
                                 name = line[1],
@@ -35,9 +34,10 @@ class Airtags:
                                 addressAreaOfInterestB= line[9]
                             )
                         air_tag.append(location)
-                    prev_latitude, prev_longitude = latitude, longitude
+                    prev_address, prev_name = streetAddress, streetName
                     if location:
                         prev_location[shuttleBus] = location
+                        
         if shuttleBus == "CCNY Shuttle 3":
             with open("Airtags.csv", "w", newline='', encoding="utf-8") as file:
                 writer = csv.writer(file)

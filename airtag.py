@@ -33,7 +33,7 @@ class AirTag:
             "streetAddress" : self.addressStreetAddress,
             "streetName" : self.addressStreetName
             }
-    def getLat(self):
-        return self.locationLatitude
-    def getLng(self):
-        return self.locationLongitude
+    def getName(self):
+        return self.addressStreetName
+    def getAddress(self):
+        return self.addressStreetAddress
