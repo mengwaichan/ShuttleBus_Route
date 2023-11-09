@@ -86,7 +86,7 @@ class BusRoutes:
             self.nextStop = nac
             self.intermediate = intermediate_to_nac
             return
-        if self.interestA == "The City College of New York" and self.streetadderss == "":
+        if self.interestA == "The City College of New York" and self.streetaddress == "":
             if self.w145: # going to w125
                 self.nextStop = w125
                 self.intermediate = intermediate_to_125
