@@ -28,9 +28,12 @@ class AirTag:
         return{
             "datetime":self.dateTime,
             "name":self.name,
-            "serialnumber":self.serialNumber,
             "lat" :self.locationLatitude,
             "lng" :self.locationLongitude,
             "streetAddress" : self.addressStreetAddress,
             "streetName" : self.addressStreetName
             }
+    def getLat(self):
+        return self.locationLatitude
+    def getLng(self):
+        return self.locationLongitude
