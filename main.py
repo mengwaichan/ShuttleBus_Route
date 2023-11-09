@@ -36,7 +36,8 @@ def processShuttleBus(name, prevShuttle):
                 float(locations[i].locationLatitude.strip()),
                 float(locations[i].locationLongitude.strip()),
                 locations[i].addressStreetAddress.strip(),
-                locations[i].addressStreetName.strip()
+                locations[i].addressStreetName.strip(),
+                locations[i].addressAreaOfInterestA.strip()
             )
         
             route.getLastDest(prev)
