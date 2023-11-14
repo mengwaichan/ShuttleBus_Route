@@ -37,9 +37,10 @@ def processShuttleBus(name, prev_route, prev_location):
                 locations[i].addressStreetName.strip(),
                 locations[i].addressAreaOfInterestA.strip()
             )
-        
-            route.getLastDest(prev)
-            route.get_nextStop(prev)
+
+            route.setPrev(prev)
+            route.getLastDest()
+            route.getNextStop()
             route.fetchRoute()
             route.deleteIntermediate()
 
@@ -53,15 +54,15 @@ def processShuttleBus(name, prev_route, prev_location):
                 route.streetname, 
                 route.distance,
                 route.duration,
-                route.nextStop.getName(),
+                route.nextStop.stopName,
                 route.polyline])
 
-prev_route = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
+prevRoute = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
 shuttleBuses = ["CCNY Shuttle 1", "CCNY Shuttle 2", "CCNY Shuttle 3"]
-prev_location = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
+prevLocation = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
 
 while True:
     for shuttleBus in shuttleBuses:
-        processShuttleBus(shuttleBus, prev_route, prev_location)
+        processShuttleBus(shuttleBus, prevRoute, prevLocation)
     
     time.sleep(60)

@@ -9,7 +9,7 @@ class Route:
                         "X-Goog-Api-Key":self.api_key,
                         "X-Goog-FieldMask":"routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline"}
 
-    def getRoute(self, originLat, originLng, destLat, destLng, intermediatesLat=None, intermediatesLng=None):
+    def fetchRoute(self, originLat, originLng, destLat, destLng, intermediatesLat=None, intermediatesLng=None):
         route_request = {"origin": {
                             "location":{
                                 "latLng":{
