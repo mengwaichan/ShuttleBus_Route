@@ -3,13 +3,18 @@ from busRoutes import BusRoutes
 import csv
 import time
 
+# To-do
+# Break processShuttleBus() into smaller pieces
+# Use Constants instead of hardcoding sleep() and csv name
+# Add Error Handling
+
 def processShuttleBus(name, prev_route, prev_location):
-    locations = Airtags.get_airtag(name, prev_location)
+    # Retieve location Data from Airtags.csv
+    locations = Airtags.getAirtag(name, prev_location)
 
     output_file = f"{name.replace(' ', '_')}_route_data.csv"
 
     with open(output_file, 'a', newline='') as csv_file:
-        # Define the CSV writer
         writer = csv.writer(csv_file)
 
         # Write the header row to the CSV
@@ -57,6 +62,7 @@ def processShuttleBus(name, prev_route, prev_location):
                 route.nextStop.stopName,
                 route.polyline])
 
+# HashMap to track last location and last route
 prevRoute = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
 shuttleBuses = ["CCNY Shuttle 1", "CCNY Shuttle 2", "CCNY Shuttle 3"]
 prevLocation = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }

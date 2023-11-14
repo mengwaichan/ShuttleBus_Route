@@ -1,3 +1,6 @@
+# To-do
+# Remove get functions
+
 class BusStop:
     def __init__(self, stopID, stopName, stopLat, stopLng, streetaddressname = None, streetaddress = None):
         self.stopID = stopID

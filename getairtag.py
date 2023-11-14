@@ -2,7 +2,7 @@ import csv
 import airtag
 
 class Airtags:
-    def get_airtag(shuttleBus, prevLocation):
+    def getAirtag(shuttleBus, prevLocation):
         airTag = []
 
         prev_address, prev_name = "", ""

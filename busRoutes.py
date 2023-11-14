@@ -1,6 +1,11 @@
 import busStop
 from route import Route
 from geocoding import Geocoding
+# To-do
+# Make this code more modular
+# Improve getNextStop() Method
+# Error handling needs to be added
+# BusStop changed to constants
 
 w145 = busStop.BusStop(1, "W145", 40.82377614314247, -73.94502568555461, 691, "St Nicholas Ave") #691 St Nicholas Ave
 nac = busStop.BusStop(2, "NAC", 40.819557163853155, -73.94991793531442, 201, "Convent Ave") # 201 The City College of New York
@@ -10,7 +15,6 @@ intermediate_to_nac = busStop.BusStop(5, "intermediate_nac", 40.811255, -73.9536
 
 class BusRoutes:
     def __init__(self, datetime, name, lat, lng, streetaddress, streetname, interestA):
-
         # Data from Airtags
         self.datetime = datetime
         self.name = name
@@ -33,11 +37,12 @@ class BusRoutes:
 
         self.prev = None
 
+    # Set previous route data
     def setPrev(self, prev = None):
         self.prev = prev
 
+    # Retrieve Route from route.py using Google MAP API
     def fetchRoute(self):
-
         busRoute = Route()
 
         destlat = self.nextStop.getLat()
@@ -65,6 +70,7 @@ class BusRoutes:
         except (KeyError, IndexError):
             self.polyline = None
 
+    # Determine Bus Next Stop
     def getNextStop(self):
         self.cleanData()
         self.adjustOrigin()
@@ -102,6 +108,7 @@ class BusRoutes:
                 self.nextStop = w145
                 return
     
+    # If Airtag Location is slightly off the route, Re-adjust the location
     def adjustOrigin(self):
         if self.streetname == "Hamilton Terr":
             self.lat = 40.821713 
@@ -124,6 +131,7 @@ class BusRoutes:
             self.streetaddress = int(self.streetaddress) - 1360
             return
 
+    # Handlde any NULL values, and String on streetaddress within the data collected
     def cleanData(self):
         if not self.streetaddress or self.streetaddress == ' ':
             self.streetaddress = 0
@@ -132,6 +140,7 @@ class BusRoutes:
         if type(self.streetaddress) == str and "–" in self.streetaddress:
             self.streetaddress = int(self.streetaddress.split('–')[0])
 
+    # Retreive the Last Location the bus was headed
     def getLastDest(self):
         if not self.prev:
             self.nextStop = nac
@@ -139,10 +148,12 @@ class BusRoutes:
         self.nextStop = self.prev.nextStop
         self.intermediate = self.prev.intermediate
 
+    # Clear any Intermediate On the route that is not suppose to be on
     def deleteIntermediate(self):
         if (int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or self.streetname == "W 125th St" or self.streetname == "W 124th St":
             self.intermediate = None
 
+    # Slight adjusting for determining Next Stop 
     def checkPrevLocation(self):
         if not self.prev:
             return 
@@ -150,7 +161,8 @@ class BusRoutes:
             self.w145 == True 
             self.nextStop = nac
 
-    def to_json(self):
+    # Return Json Format of this object
+    def toJson(self):
         return {
             "datetime":self.datetime,
             "name":self.name,
