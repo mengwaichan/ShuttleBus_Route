@@ -1,6 +1,8 @@
 import csv
 import airtag
 
+# To-do
+# Remove get() methods
 class AirTag:
     def __init__(self,
                  dateTime,
@@ -24,7 +26,7 @@ class AirTag:
         self.addressAreaOfInterestA = addressAreaOfInterestA
         self.addressAreaOfInterestB = addressAreaOfInterestB
     
-    def to_json(self):
+    def toJson(self):
         return{
             "datetime":self.dateTime,
             "name":self.name,
