@@ -31,8 +31,14 @@ class BusRoutes:
         self.nextStop = None
         self.intermediate = None
 
+        self.prev = None
+
+    def setPrev(self, prev = None):
+        self.prev = prev
+
     def fetchRoute(self):
-        bus_route = Route()
+
+        busRoute = Route()
 
         destlat = self.nextStop.getLat()
         destlng = self.nextStop.getLng()
@@ -40,34 +46,35 @@ class BusRoutes:
         if self.intermediate:
             interlat = self.intermediate.getLat()
             interlng = self.intermediate.getLng()
-            response_data = bus_route.getRoute(self.lat, self.lng, destlat, destlng, interlat, interlng)
+            responseData = busRoute.fetchRoute(self.lat, self.lng, destlat, destlng, interlat, interlng)
         else:
-            response_data = bus_route.getRoute(self.lat, self.lng, destlat, destlng)
+            responseData = busRoute.fetchRoute(self.lat, self.lng, destlat, destlng)
 
         try:
-            self.distance = response_data['routes'][0]['distanceMeters']
+            self.distance = responseData['routes'][0]['distanceMeters']
         except (KeyError, IndexError):
             self.distance = None
 
         try:
-            self.duration = response_data['routes'][0]['duration']
+            self.duration = responseData['routes'][0]['duration']
         except (KeyError, IndexError):
             self.duration = None
 
         try:
-            self.polyline = response_data['routes'][0]['polyline']['encodedPolyline']
+            self.polyline = responseData['routes'][0]['polyline']['encodedPolyline']
         except (KeyError, IndexError):
             self.polyline = None
 
-    def get_nextStop(self, prev = None):
-        self.checkData()
+    def getNextStop(self):
+        self.cleanData()
         self.adjustOrigin()
-          
-        if prev:
-            self.w145 = prev.w145
-            self.w125 = prev.w125
+        self.checkPrevLocation()
 
-        if (int(self.streetaddress) >= 630 and self.streetname == "St Nicholas Ave") or (self.streetname == "W 145th St" and 410 < int(self.streetaddress)) or self.streetname == "W 141st St": #145
+        if self.prev:
+            self.w145 = self.prev.w145
+            self.w125 = self.prev.w125
+
+        if (int(self.streetaddress) >= 630 and self.streetname == "St Nicholas Ave") or (self.streetname == "W 145th St" and 410 < int(self.streetaddress)) or self.streetname == "W 141st St" or (self.interestA == "145 St" and self.streetaddress == ""): #145
             self.w145 = True
             self.w125 = False
             self.nextStop = nac
@@ -117,7 +124,7 @@ class BusRoutes:
             self.streetaddress = int(self.streetaddress) - 1360
             return
 
-    def checkData(self):
+    def cleanData(self):
         if not self.streetaddress or self.streetaddress == ' ':
             self.streetaddress = 0
         if not self.streetname or self.streetname == ' ':
@@ -125,15 +132,23 @@ class BusRoutes:
         if type(self.streetaddress) == str and "–" in self.streetaddress:
             self.streetaddress = int(self.streetaddress.split('–')[0])
 
-    def getLastDest(self, route = None):
-        if not route:
+    def getLastDest(self):
+        if not self.prev:
+            self.nextStop = nac
             return
-        self.nextStop = route.nextStop
-        self.intermediate = route.intermediate
+        self.nextStop = self.prev.nextStop
+        self.intermediate = self.prev.intermediate
 
     def deleteIntermediate(self):
         if (int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or self.streetname == "W 125th St" or self.streetname == "W 124th St":
             self.intermediate = None
+
+    def checkPrevLocation(self):
+        if not self.prev:
+            return 
+        if (int(self.prev.streetaddress) >= 280 and self.prev.streetname == "Convent Ave") or (int(self.prev.streetaddress) <= 410 and self.prev.streetname == "W 145th St"):
+            self.w145 == True 
+            self.nextStop = nac
 
     def to_json(self):
         return {
@@ -145,7 +160,7 @@ class BusRoutes:
             "streetName" : self.streetname,
             "distance" : self.distance,
             "duration" : self.duration,
-            "nextStop" : self.nextStop.getName(),
+            "nextStop" : self.nextStop.stopName,
             "polyline" : self.polyline
         }
     

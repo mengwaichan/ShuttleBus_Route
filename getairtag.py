@@ -2,14 +2,14 @@ import csv
 import airtag
 
 class Airtags:
-    def get_airtag(shuttleBus, prev_location):
-        air_tag = []
+    def get_airtag(shuttleBus, prevLocation):
+        airTag = []
 
         prev_address, prev_name = "", ""
         location = None
-        if prev_location[shuttleBus]:
-            prev_address = prev_location[shuttleBus].getAddress()
-            prev_name = prev_location[shuttleBus].getName()
+        if prevLocation[shuttleBus]:
+            prev_address = prevLocation[shuttleBus].getAddress()
+            prev_name = prevLocation[shuttleBus].getName()
 
         with open("Airtags.csv", encoding="utf-8") as file:
             reader = csv.reader(file, delimiter=",")
@@ -33,14 +33,14 @@ class Airtags:
                                 addressAreaOfInterestA = line[8],
                                 addressAreaOfInterestB= line[9]
                             )
-                        air_tag.append(location)
+                        airTag.append(location)
                     prev_address, prev_name = streetAddress, streetName
                     if location:
-                        prev_location[shuttleBus] = location
+                        prevLocation[shuttleBus] = location
                         
         if shuttleBus == "CCNY Shuttle 3":
             with open("Airtags.csv", "w", newline='', encoding="utf-8") as file:
                 writer = csv.writer(file)
                 writer.writerow(header)
 
-        return air_tag
+        return airTag
