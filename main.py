@@ -28,6 +28,7 @@ def processShuttleBus(name, prev_route, prev_location):
                 'streetname', 
                 'distance', 
                 'duration',
+                'prevStop',
                 'nextStop',
                 'polyline'])  
 
@@ -50,6 +51,11 @@ def processShuttleBus(name, prev_route, prev_location):
             route.deleteIntermediate()
 
             prev_route[name] = route
+            prevStop = route.prevStop
+            if not prevStop:
+                prevStop = ""
+            else:
+                prevStop = route.prevStop.stopName
             writer.writerow(
                 [route.datetime, 
                 route.name, 
@@ -59,6 +65,7 @@ def processShuttleBus(name, prev_route, prev_location):
                 route.streetname, 
                 route.distance,
                 route.duration,
+                prevStop,
                 route.nextStop.stopName,
                 route.polyline])
 
