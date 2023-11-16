@@ -1,5 +1,5 @@
 # To-do
-# Remove get functions
+# changed to a more generic var name
 
 class BusStop:
     def __init__(self, stopID, stopName, stopLat, stopLng, streetaddressname = None, streetaddress = None):
@@ -10,9 +10,3 @@ class BusStop:
         self.streetaddressname = streetaddressname
         self.streetaddress = streetaddress
     
-    def getLat(self):
-        return self.stopLat
-    def getLng(self):
-        return self.stopLng
-    def getName(self):
-        return self.stopName

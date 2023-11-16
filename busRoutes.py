@@ -1,11 +1,15 @@
 import busStop
 from route import Route
 from geocoding import Geocoding
+
 # To-do
 # Make this code more modular
 # Improve getNextStop() Method
 # Error handling needs to be added
 # BusStop changed to constants
+# 
+# Use Flask to build an API to add, delete, or restrict bus stops
+
 
 w145 = busStop.BusStop(1, "W145", 40.82377614314247, -73.94502568555461, 691, "St Nicholas Ave") #691 St Nicholas Ave
 nac = busStop.BusStop(2, "NAC", 40.819557163853155, -73.94991793531442, 201, "Convent Ave") # 201 The City College of New York
@@ -30,27 +34,28 @@ class BusRoutes:
         self.polyline = None
 
         # Determine Bus Direction
-        self.w125 = False # if true it passed w125, false is heading to w125
-        self.w145 = False 
         self.nextStop = None
         self.intermediate = None
+        self.prevStop = None
 
-        self.prev = None
+        self.prevRoute = None
 
     # Set previous route data
     def setPrev(self, prev = None):
-        self.prev = prev
+        self.prevRoute = prev
+        if prev:
+            self.prevStop = prev.prevStop
 
     # Retrieve Route from route.py using Google MAP API
     def fetchRoute(self):
         busRoute = Route()
 
-        destlat = self.nextStop.getLat()
-        destlng = self.nextStop.getLng()
+        destlat = self.nextStop.stopLat
+        destlng = self.nextStop.stopLng
 
         if self.intermediate:
-            interlat = self.intermediate.getLat()
-            interlng = self.intermediate.getLng()
+            interlat = self.intermediate.stopLat
+            interlng = self.intermediate.stopLng
             responseData = busRoute.fetchRoute(self.lat, self.lng, destlat, destlng, interlat, interlng)
         else:
             responseData = busRoute.fetchRoute(self.lat, self.lng, destlat, destlng)
@@ -74,40 +79,59 @@ class BusRoutes:
     def getNextStop(self):
         self.cleanData()
         self.adjustOrigin()
-        self.checkPrevLocation()
+        if not self.prevStop:
+            self.prevStop == nac
 
-        if self.prev:
-            self.w145 = self.prev.w145
-            self.w125 = self.prev.w125
-
-        if (int(self.streetaddress) >= 630 and self.streetname == "St Nicholas Ave") or (self.streetname == "W 145th St" and 410 < int(self.streetaddress)) or self.streetname == "W 141st St" or (self.interestA == "145 St" and self.streetaddress == ""): #145
-            self.w145 = True
-            self.w125 = False
+        # Reached busStop
+        if (int(self.streetaddress) >= 630 and self.streetname == "St Nicholas Ave") or self.streetname == "W 145th St" or self.streetname == "W 141st St" or (self.interestA == "145 St" and self.streetaddress == ""): #145
             self.nextStop = nac
+            self.prevStop = w145
             return
-        if  (int(self.streetaddress) == 0 or 150 <= int(self.streetaddress) <= 250)  and self.streetname == "Convent Ave": # CCNY
-            if self.w145: # going to w125
+        
+        if ((150 <= int(self.streetaddress) <= 210)  and self.streetname == "Convent Ave") or (self.interestA == "The City College of New York" and self.streetaddress == ""): # CCNY
+            if self.prevStop == w125: # going to w145
+                self.nextStop = w145
+                self.prevStop = nac
+                return
+            elif self.prevStop == w145: # going to w125
                 self.nextStop = w125
                 self.intermediate = intermediate_to_125
+                self.prevStop = nac
                 return
-            else: # going to w145
-                self.nextStop = w145
-                return
-        if (int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or (self.streetname == "W 125th St" and int(self.streetaddress) < 400) or self.streetname == "W 124th St" or self.streetname == "Manhattan Ave": #125
-            self.w145 = False
-            self.w125 = True
+       
+        if (100 <= int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or (self.streetname == "W 125th St" and int(self.streetaddress) < 400) or self.streetname == "W 124th St" or self.streetname == "Manhattan Ave": #125
             self.nextStop = nac
             self.intermediate = intermediate_to_nac
+            self.prevStop = w125
             return
-        if self.interestA == "The City College of New York" and self.streetaddress == "":
-            if self.w145: # going to w125
-                self.nextStop = w125
-                self.intermediate = intermediate_to_125
+        
+        if 0 == int(self.streetaddress) and self.streetname == "St Nicholas Ave":
+            if self.interestA == "125 St":
+                self.nextStop = nac
+                self.intermediate = intermediate_to_nac
+                self.prevStop = w125
                 return
-            else: # going to w145
-                self.nextStop = w145
+            else:
+                self.nextStop = nac
+                self.prevStop = w145
                 return
+        
+
     
+        if self.prevRoute:
+            self.skippedStop()
+            return
+    
+    def skippedStop(self):
+        if (210 < int(self.streetaddress) <= 355 and self.streetname == "Convent Ave") and self.prevRoute.prevStop == w125:
+            self.nextStop = w145
+            self.prevStop = nac
+            return
+        if ((135 >= int(self.streetaddress) and self.streetname == "Convent Ave") or self.streetname == "Morningside Ave" ) and self.prevRoute.prevStop == w145 :
+            self.nextStop = w125
+            self.prevStop = nac
+            return
+        
     # If Airtag Location is slightly off the route, Re-adjust the location
     def adjustOrigin(self):
         if self.streetname == "Hamilton Terr":
@@ -130,6 +154,12 @@ class BusRoutes:
             self.streetname = "Convnet Ave"
             self.streetaddress = int(self.streetaddress) - 1360
             return
+        if self.streetname == "St Nicholas Terr" and int(self.streetaddress) > 250 or self.streetname == "W 140th St":
+            self.lat = 40.81991080221068
+            self.lng = -73.94967653138818
+            self.streetname = "Convent Ave"
+            self.streetaddress = 255
+            return
 
     # Handlde any NULL values, and String on streetaddress within the data collected
     def cleanData(self):
@@ -142,24 +172,16 @@ class BusRoutes:
 
     # Retreive the Last Location the bus was headed
     def getLastDest(self):
-        if not self.prev:
+        if not self.prevRoute:
             self.nextStop = nac
             return
-        self.nextStop = self.prev.nextStop
-        self.intermediate = self.prev.intermediate
+        self.nextStop = self.prevRoute.nextStop
+        self.intermediate = self.prevRoute.intermediate
 
     # Clear any Intermediate On the route that is not suppose to be on
     def deleteIntermediate(self):
         if (int(self.streetaddress) <= 300 and self.streetname == "St Nicholas Ave") or self.streetname == "Hancock Pl" or self.streetname == "W 125th St" or self.streetname == "W 124th St":
             self.intermediate = None
-
-    # Slight adjusting for determining Next Stop 
-    def checkPrevLocation(self):
-        if not self.prev:
-            return 
-        if (int(self.prev.streetaddress) >= 280 and self.prev.streetname == "Convent Ave") or (int(self.prev.streetaddress) <= 410 and self.prev.streetname == "W 145th St"):
-            self.w145 == True 
-            self.nextStop = nac
 
     # Return Json Format of this object
     def toJson(self):
