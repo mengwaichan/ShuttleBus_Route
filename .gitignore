@@ -5,3 +5,4 @@ Constants.py
 .env
 DailyAirtagData/
 .json
+env/
