@@ -2,11 +2,26 @@ from getairtag import Airtags
 from busRoutes import BusRoutes
 import csv
 import time
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
 # To-do
 # Break processShuttleBus() into smaller pieces
 # Use Constants instead of hardcoding sleep() and csv name
 # Add Error Handling
+
+# Initialize Firebase
+cred = credentials.Certificate('./Firebase_auth.json')
+firebase_admin.initialize_app(cred)
+
+# Initialize Firestore instance
+db = firestore.client()
+
+# Function to add data to Firestore
+def add_data_to_firestore(collection_name, data):
+    db.collection(collection_name).add(data)
+
 
 def processShuttleBus(name, prev_route, prev_location):
     # Retieve location Data from Airtags.csv
@@ -68,6 +83,25 @@ def processShuttleBus(name, prev_route, prev_location):
                 prevStop,
                 route.nextStop.stopName,
                 route.polyline])
+
+            # Data to be written to Firestore
+            firestore_data = {
+                'datetime': route.datetime,
+                'name': route.name,
+                'latitude': route.lat,
+                'longitude': route.lng,
+                'streetaddress': route.streetaddress,
+                'streetname': route.streetname,
+                'distance': route.distance,
+                'duration': route.duration,
+                'prevStop': prevStop,
+                'nextStop': route.nextStop.stopName,
+                'polyline': route.polyline
+            }
+
+            # Write data to Firestore
+            collection_name = "CCNY_Shuttle_Routing"
+            add_data_to_firestore(collection_name, firestore_data)
 
 # HashMap to track last location and last route
 prevRoute = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
