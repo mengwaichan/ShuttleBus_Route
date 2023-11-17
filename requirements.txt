@@ -1,1 +1,2 @@
 requests
+firebase_admin
