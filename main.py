@@ -1,17 +1,19 @@
-from getairtag import Airtags
-from busRoutes import BusRoutes
 import csv
 import time
+from airtags import Airtags
+from bus_route import BusRoute
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
 # To-do
-# Break processShuttleBus() into smaller pieces
+# Break process_shuttle_bus() into smaller pieces
 # Use Constants instead of hardcoding sleep() and csv name
 # Add Error Handling
 
-# Initialize Firebase
+SLEEP_TIME = 60
+OUTPUT_FILE_SUFFIX = "_route_data.csv"
+
 cred = credentials.Certificate('./Firebase_auth.json')
 firebase_admin.initialize_app(cred)
 
@@ -23,11 +25,11 @@ def add_data_to_firestore(collection_name, data):
     db.collection(collection_name).add(data)
 
 
-def processShuttleBus(name, prev_route, prev_location):
+def process_shuttle_bus(name, prev_route, prev_location):
     # Retieve location Data from Airtags.csv
-    locations = Airtags.getAirtag(name, prev_location)
+    locations = Airtags.get_airtags(name, prev_location)
 
-    output_file = f"{name.replace(' ', '_')}_route_data.csv"
+    output_file = f"{name.replace(' ', '_')}{OUTPUT_FILE_SUFFIX}"
 
     with open(output_file, 'a', newline='') as csv_file:
         writer = csv.writer(csv_file)
@@ -49,53 +51,53 @@ def processShuttleBus(name, prev_route, prev_location):
 
         for i in range(len(locations)):
             prev = prev_route[name]
-            route = BusRoutes(
-                locations[i].dateTime.strip(), 
+            route = BusRoute(
+                prev,
+                locations[i].datetime.strip(), 
                 locations[i].name.strip(), 
-                float(locations[i].locationLatitude.strip()),
-                float(locations[i].locationLongitude.strip()),
-                locations[i].addressStreetAddress.strip(),
-                locations[i].addressStreetName.strip(),
-                locations[i].addressAreaOfInterestA.strip()
+                float(locations[i].latitude.strip()),
+                float(locations[i].longitude.strip()),
+                locations[i].street_address.strip(),
+                locations[i].street_name.strip(),
+                locations[i].area_of_interest_a.strip()
             )
 
-            route.setPrev(prev)
-            route.getLastDest()
-            route.getNextStop()
-            route.fetchRoute()
-            route.deleteIntermediate()
+            route.get_last_destination()
+            route.get_next_stop()
+            route.fetch_route()
+            route.delete_intermediate()
 
             prev_route[name] = route
-            prevStop = route.prevStop
-            if not prevStop:
-                prevStop = ""
+            prev_stop = route.previous_stop
+            if not prev_stop:
+                prev_stop = ""
             else:
-                prevStop = route.prevStop.stopName
+                prev_stop = route.previous_stop.name
             writer.writerow(
                 [route.datetime, 
                 route.name, 
-                route.lat, 
-                route.lng, 
-                route.streetaddress, 
-                route.streetname, 
+                route.latitude, 
+                route.longitude, 
+                route.street_address, 
+                route.street_name, 
                 route.distance,
                 route.duration,
-                prevStop,
-                route.nextStop.stopName,
+                prev_stop,
+                route.next_stop.name,
                 route.polyline])
 
             # Data to be written to Firestore
             firestore_data = {
                 'datetime': route.datetime,
                 'name': route.name,
-                'latitude': route.lat,
-                'longitude': route.lng,
-                'streetaddress': route.streetaddress,
-                'streetname': route.streetname,
+                'latitude': route.latitude,
+                'longitude': route.longitude,
+                'streetaddress': route.street_address,
+                'streetname': route.street_name,
                 'distance': route.distance,
                 'duration': route.duration,
-                'prevStop': prevStop,
-                'nextStop': route.nextStop.stopName,
+                'prevStop': prev_stop,
+                'nextStop': route.next_stop.name,
                 'polyline': route.polyline
             }
 
@@ -104,12 +106,12 @@ def processShuttleBus(name, prev_route, prev_location):
             add_data_to_firestore(collection_name, firestore_data)
 
 # HashMap to track last location and last route
-prevRoute = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
-shuttleBuses = ["CCNY Shuttle 1", "CCNY Shuttle 2", "CCNY Shuttle 3"]
-prevLocation = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
+prev_route = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
+shuttle_buses = ["CCNY Shuttle 1", "CCNY Shuttle 2", "CCNY Shuttle 3"]
+prev_location = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
 
 while True:
-    for shuttleBus in shuttleBuses:
-        processShuttleBus(shuttleBus, prevRoute, prevLocation)
+    for shuttleBus in shuttle_buses:
+        process_shuttle_bus(shuttleBus, prev_route, prev_location)
     
-    time.sleep(60)
+    time.sleep(SLEEP_TIME)
