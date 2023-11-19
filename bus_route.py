@@ -4,11 +4,8 @@ from geocoding import Geocoding
 
 # To-do
 # Make this code more modular
-# Improve get_next_stop() Method
 # Error handling needs to be added
 # Create Enum for All Street Names
-#
-# Use Flask to build an API to add, delete, or restrict bus stops
 
 # All Bus Stops and Intermediates shuttle bus will pass 
 BUS_STOPS = {
@@ -84,24 +81,12 @@ class BusRoute:
             self.previous_stop = BUS_STOPS['NAC']
 
         # Reached Bus Stops
-        
         if self.reached_w145():
             return
         if self.reached_ccny():
             return
         if self.reached_w125():
             return
-        
-        if int(self.street_address) == 0 and self.street_name == "St Nicholas Ave":
-            if self.interest_a == "125 St":
-                self.next_stop = BUS_STOPS['NAC']
-                self.intermediate = BUS_STOPS['intermediate_to_nac']
-                self.previous_stop = BUS_STOPS['W125']
-                return
-            else:
-                self.next_stop = BUS_STOPS['NAC']
-                self.previous_stop = BUS_STOPS['W145']
-                return
         
         # if airtag did not update at the bus stop
         if self.previous_route:
@@ -131,7 +116,18 @@ class BusRoute:
             self.next_stop = BUS_STOPS['NAC']
             self.intermediate = BUS_STOPS['intermediate_to_nac']
             self.previous_stop = BUS_STOPS['W125']
-            return
+            return True
+        if int(self.street_address) == 0 and self.street_name == "St Nicholas Ave":
+            if self.interest_a == "125 St":
+                self.next_stop = BUS_STOPS['NAC']
+                self.intermediate = BUS_STOPS['intermediate_to_nac']
+                self.previous_stop = BUS_STOPS['W125']
+                return True
+            else:
+                self.next_stop = BUS_STOPS['NAC']
+                self.previous_stop = BUS_STOPS['W145']
+                return True
+        return False
 
     def reached_ccny(self):
         if ((150 <= int(self.street_address) <= 210)  and self.street_name == "Convent Ave") or (self.interest_a == "The City College of New York" and self.street_address == ""): # CCNY

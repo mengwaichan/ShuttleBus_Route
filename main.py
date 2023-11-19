@@ -8,8 +8,9 @@ from firebase_admin import firestore
 
 # To-do
 # Break process_shuttle_bus() into smaller pieces
-# Use Constants instead of hardcoding sleep() and csv name
 # Add Error Handling
+#
+# Use Flask to build an API to add, delete, or restrict bus stops
 
 SLEEP_TIME = 60
 OUTPUT_FILE_SUFFIX = "_route_data.csv"
