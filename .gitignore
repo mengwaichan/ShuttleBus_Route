@@ -4,5 +4,5 @@ __pycache__/
 Constants.py
 .env
 DailyAirtagData/
-.json
+*.json
 env/
