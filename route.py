@@ -7,25 +7,25 @@ import Constants
 class Route:
     def __init__(self):
         self.api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
-        self.api_key = Constants.map_api_key
+        self.api_key = Constants.MAP_API_KEY
         self.headers = {"Content-Type": "application/json", 
                         "X-Goog-Api-Key":self.api_key,
                         "X-Goog-FieldMask":"routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline"}
 
-    def fetchRoute(self, originLat, originLng, destLat, destLng, intermediatesLat=None, intermediatesLng=None):
+    def fetch_route(self, origin_latitude, origin_longitude, destination_latitude, destination_longitude, intermediates_latitude=None, intermediates_longitude=None):
         route_request = {"origin": {
                             "location":{
                                 "latLng":{
-                                    "latitude": originLat,
-                                    "longitude": originLng,
+                                    "latitude": origin_latitude,
+                                    "longitude": origin_longitude,
                                     }
                                 }
                             },
                          "destination": {
                                 "location":{
                                     "latLng":{
-                                        "latitude": destLat,
-                                        "longitude": destLng
+                                        "latitude": destination_latitude,
+                                        "longitude": destination_longitude
                                         }
                                 }
                             },
@@ -35,12 +35,12 @@ class Route:
                          "units": "IMPERIAL",
                 }
        
-        if intermediatesLat and intermediatesLng:
+        if intermediates_latitude and intermediates_longitude:
             waypoint = {
                 "location": {
                     "latLng": {
-                        "latitude": intermediatesLat,
-                        "longitude": intermediatesLng
+                        "latitude": intermediates_latitude,
+                        "longitude": intermediates_longitude
                     }
                 }
             }
