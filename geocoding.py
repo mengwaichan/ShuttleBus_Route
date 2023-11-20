@@ -22,7 +22,7 @@ class Geocoding:
             return None
        
 #test = Geocoding()
-#result = test.fetchLatLng(418, "W 145th St")
+#result = test.fetch_coordinates(685,"St Nicholas Ave")
 #lat = result['lat']
 #lng = result['lng']
 #print(lat, lng)

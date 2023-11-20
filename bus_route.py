@@ -176,6 +176,16 @@ class BusRoute:
             self.street_address = 255
             return
 
+        if (int(self.street_address) >= 630 and self.street_name == "St Nicholas Ave"):
+            if int(self.street_address) % 2 == 0:
+                new_coordinates = Geocoding()
+                result = new_coordinates.fetch_coordinates(int(self.street_address) +1, self.street_name)
+
+                self.latitude = result['lat']
+                self.longitude = result['lng']
+                self.street_address = int(self.street_address) +1
+
+                return
     # Handlde any NULL values, or String values on streetaddress within the data collected
     def clean_data(self):
         if not self.street_address or self.street_address == ' ':

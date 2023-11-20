@@ -50,10 +50,10 @@ class Route:
         return response.json()
 
 
-#fetchRoute = Route()
+# fetchRoute = Route()
 
-#response_data = fetchRoute.getRoute(40.820043999999996, -73.949822100000006, 40.82377614314247, -73.94502568555461)
-#print(response_data)
+# response_data = fetchRoute.fetch_route(40.823599, -73.9454463, 40.819557163853155, -73.94991793531442)
+# print(response_data)
 
 
 
