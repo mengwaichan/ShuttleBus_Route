@@ -17,8 +17,8 @@ ROUTE_OUTPUT_FILE_SUFFIX = "_route_data.csv"
 LOCATION_OUTPUT_FILE_SUFFIX = "_location_data.csv"
 
 # Function to add data to Firestore
-#def add_data_to_firestore(collection_name, data):
-#    db.collection(collection_name).add(data)
+def add_data_to_firestore(collection_name, data):
+    db.collection(collection_name).add(data)
 
 
 def process_shuttle_bus(name, prev_route, prev_location):
@@ -114,8 +114,8 @@ def process_shuttle_bus(name, prev_route, prev_location):
             }
 
             # Write Route data to Firestore
-#            collection_name_route = "CCNY_Shuttle_Routing"
-#            add_data_to_firestore(collection_name_route, firestore_route_data)
+            collection_name_route = "CCNY_Shuttle_Routing"
+            add_data_to_firestore(collection_name_route, firestore_route_data)
 
 
             ## Write Location data to csv and firebase
@@ -145,8 +145,8 @@ def process_shuttle_bus(name, prev_route, prev_location):
                 'locationpositiontype' : locations[i].position_type.strip()
             }
 
-#            collection_name_locations = name.replace(' ', '_')
-#            add_data_to_firestore(collection_name_locations, firestore_location_data)
+            collection_name_locations = name.replace(' ', '_')
+            add_data_to_firestore(collection_name_locations, firestore_location_data)
 
 # HashMap to track last location and last route
 prev_route = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
