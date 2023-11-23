@@ -76,10 +76,8 @@ class BusRoute:
     def get_next_stop(self):
         self.clean_data()
         self.adjust_origin()
-
-        if not self.previous_stop:
-            self.previous_stop = BUS_STOPS['NAC']
-
+        self.get_previous_stop()
+        
         # Reached Bus Stops
         if self.reached_w145():
             return
@@ -142,6 +140,12 @@ class BusRoute:
                 return True
         return False
     
+    def get_previous_stop(self):
+        if self.previous_route:
+            self.previous_stop = self.previous_route.previous_stop
+        else:
+            self.previous_stop = BUS_STOPS['NAC']
+
     # If Airtag Location is slightly off the route, Re-adjust the location, This happened due to airtag pinging off from a radius
     def adjust_origin(self):
         if self.street_name == "Hamilton Terr":
