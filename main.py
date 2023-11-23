@@ -2,9 +2,9 @@ import csv
 import time
 from airtags import Airtags
 from bus_route import BusRoute
-#import firebase_admin
-#from firebase_admin import credentials
-#from firebase_admin import firestore
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
 # To-do
 # Break process_shuttle_bus() into smaller pieces
@@ -15,15 +15,15 @@ from bus_route import BusRoute
 SLEEP_TIME = 60
 OUTPUT_FILE_SUFFIX = "_route_data.csv"
 
-#cred = credentials.Certificate('./Firebase_auth.json')
-#firebase_admin.initialize_app(cred)
+cred = credentials.Certificate('./Firebase_auth.json')
+firebase_admin.initialize_app(cred)
 
 # Initialize Firestore instance
-#db = firestore.client()
+db = firestore.client()
 
 # Function to add data to Firestore
-#def add_data_to_firestore(collection_name, data):
-#    db.collection(collection_name).add(data)
+def add_data_to_firestore(collection_name, data):
+    db.collection(collection_name).add(data)
 
 
 def process_shuttle_bus(name, prev_route, prev_location):
@@ -88,23 +88,23 @@ def process_shuttle_bus(name, prev_route, prev_location):
                 route.polyline])
 
             # Data to be written to Firestore
-#            firestore_data = {
-#               'datetime': route.datetime,
- #               'name': route.name,
-  #              'latitude': route.latitude,
-   #             'longitude': route.longitude,
-    #            'streetaddress': route.street_address,
-     #           'streetname': route.street_name,
-      #          'distance': route.distance,
-       #         'duration': route.duration,
-        #        'prevStop': prev_stop,
-         #       'nextStop': route.next_stop.name,
-          #      'polyline': route.polyline
-           # }
+            firestore_data = {
+               'datetime': route.datetime,
+                'name': route.name,
+                'latitude': route.latitude,
+                'longitude': route.longitude,
+                'streetaddress': route.street_address,
+                'streetname': route.street_name,
+                'distance': route.distance,
+                'duration': route.duration,
+                'prevStop': prev_stop,
+                'nextStop': route.next_stop.name,
+                'polyline': route.polyline
+            }
 
             # Write data to Firestore
-     #       collection_name = "CCNY_Shuttle_Routing"
-      #      add_data_to_firestore(collection_name, firestore_data)
+            collection_name = "CCNY_Shuttle_Routing"
+            add_data_to_firestore(collection_name, firestore_data)
 
 # HashMap to track last location and last route
 prev_route = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
