@@ -88,7 +88,7 @@ def process_shuttle_bus(name, prev_route, prev_location):
                 route.polyline])
 
             # Data to be written to Firestore
-            firestore_data = {
+            firestore_route_data = {
                'datetime': route.datetime,
                 'name': route.name,
                 'latitude': route.latitude,
@@ -103,8 +103,24 @@ def process_shuttle_bus(name, prev_route, prev_location):
             }
 
             # Write data to Firestore
-            collection_name = "CCNY_Shuttle_Routing"
-            add_data_to_firestore(collection_name, firestore_data)
+            collection_name_route = "CCNY_Shuttle_Routing"
+            add_data_to_firestore(collection_name_route, firestore_route_data)
+
+            firestore_location_data = {
+                'datetime' : locations[i].datetime.strip(), 
+                'name' : locations[i].name.strip(), 
+                'locationlatitude' : float(locations[i].latitude.strip()),
+                'locationlongitude' : float(locations[i].longitude.strip()),
+                'addressstreetaddress': locations[i].street_address.strip(),
+                'addressstreetname' : locations[i].street_name.strip(),
+                'addressareaofinteresta': locations[i].area_of_interest_a.strip(),
+                'addressareaofinterestb': locations[i].area_of_interest_b.strip(),
+                'batterystatus' : int(locations[i].battery_status.strip()),
+                'locationpositiontype' : locations[i].position_type.strip()
+            }
+            
+            collection_name_locations = name.replace(' ', '_')
+            add_data_to_firestore(collection_name_locations, firestore_location_data)
 
 # HashMap to track last location and last route
 prev_route = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
