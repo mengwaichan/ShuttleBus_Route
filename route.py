@@ -1,13 +1,13 @@
 import requests
 import Constants
 
-# To-do
-# Add Error handling for post request
-
 class Route:
     def __init__(self):
+        # Initialize the Route class with Google Map Route API and API key
         self.api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
         self.api_key = Constants.MAP_API_KEY
+
+        # Define header for api request
         self.headers = {"Content-Type": "application/json", 
                         "X-Goog-Api-Key":self.api_key,
                         "X-Goog-FieldMask":"routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline"}
@@ -34,7 +34,8 @@ class Route:
                          "languageCode": "en_US",
                          "units": "IMPERIAL",
                 }
-       
+
+        # If intermediate points are provided, include them in the request
         if intermediates_latitude and intermediates_longitude:
             waypoint = {
                 "location": {
@@ -49,11 +50,11 @@ class Route:
         response = requests.post(self.api_url,headers=self.headers, json=route_request)  
         return response.json()
 
+### For Testing Purpose
+#fetchRoute = Route()
 
-# fetchRoute = Route()
-
-# response_data = fetchRoute.fetch_route(40.823599, -73.9454463, 40.819557163853155, -73.94991793531442)
-# print(response_data)
+#response_data = fetchRoute.fetch_route(40.819557163853155, -73.94991793531442, 40.82377614314247, -73.94502568555461)
+#print(response_data)
 
 
 

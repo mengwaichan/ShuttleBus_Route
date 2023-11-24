@@ -2,8 +2,7 @@ from bus_stop import BusStop
 from route import Route
 from geocoding import Geocoding
 
-# To-do
-# Make this code more modular
+# TODO
 # Error handling needs to be added
 # Create Enum for All Street Names
 
@@ -49,12 +48,15 @@ class BusRoute:
         destination_latitude = self.next_stop.latitude
         destination_longitude = self.next_stop.longitude
 
+        # Fetch route with Google Route API
         if self.intermediate:
             intermediates_latitude = self.intermediate.latitude
             intermediates_longitude = self.intermediate.longitude
-            response = bus_route.fetch_route(self.latitude, self.longitude, destination_latitude, destination_longitude, intermediates_latitude, intermediates_longitude)
+            response = bus_route.fetch_route(
+                self.latitude, self.longitude, destination_latitude, destination_longitude, intermediates_latitude, intermediates_longitude)
         else:
-            response = bus_route.fetch_route(self.latitude, self.longitude, destination_latitude, destination_longitude)
+            response = bus_route.fetch_route(
+                self.latitude, self.longitude, destination_latitude, destination_longitude)
 
         # Update distance, duration, polyline
         try:
@@ -91,30 +93,50 @@ class BusRoute:
             self.skipped_stop()
             return
     
+    # Handle Cases Based on where the bus is
     def skipped_stop(self):
-        if (210 < int(self.street_address) <= 355 and self.street_name == "Convent Ave") and self.previous_route.previous_stop == BUS_STOPS['W125']:
+        is_w145_route = (((210 < int(self.street_address) <= 355 and self.street_name == "Convent Ave") or 
+                          self.street_name in ["W 135th St", "W 133rd St", "W 131st St", "W 130th St", "W 129th St", "W 128th St", "W 127th St", "W 126th St"])
+                          and self.previous_route.previous_stop == BUS_STOPS['W125'])
+
+        is_w125_route = (((135 >= int(self.street_address) and self.street_name == "Convent Ave") or self.street_name == "Morningside Ave" or 
+                         self.street_name in ["W 140th St", "W 141st St", "W 142nd St", "W 143rd St", "W 144th St"]) 
+                         and self.previous_route.previous_stop == BUS_STOPS['W145'])
+
+        if is_w145_route:
             self.next_stop = BUS_STOPS['W145']
             self.previous_stop = BUS_STOPS['NAC']
             return
         
-        if ((135 >= int(self.street_address) and self.street_name == "Convent Ave") or self.street_name == "Morningside Ave" ) and self.previous_route.previous_stop == BUS_STOPS['W145'] :
+        if is_w125_route:
             self.next_stop = BUS_STOPS['W125']
             self.previous_stop = BUS_STOPS['NAC']
             return
             
     def reached_w145(self):
-        if (int(self.street_address) >= 630 and self.street_name == "St Nicholas Ave") or self.street_name == "W 145th St" or self.street_name == "W 141st St" or (self.interest_a == "145 St" and self.street_address == ""): #145
+        is_w145 = ((int(self.street_address) >= 630 and self.street_name == "St Nicholas Ave") or 
+                   (self.interest_a == "145 St" and self.street_address == "") or
+                   self.street_name in ["W 145th St", "W 141st St"])
+
+        if is_w145:
             self.next_stop = BUS_STOPS['NAC']
             self.previous_stop = BUS_STOPS['W145']
             return True
         return False
 
     def reached_w125(self):
-        if (100 <= int(self.street_address) <= 300 and self.street_name == "St Nicholas Ave") or self.street_name == "Hancock Pl" or (self.street_name == "W 125th St" and int(self.street_address) < 400) or self.street_name == "W 124th St" or self.street_name == "Manhattan Ave": #125
+        is_w125 = ((100 <= int(self.street_address) <= 300 and self.street_name == "St Nicholas Ave") or 
+                   (self.street_name == "W 125th St" and int(self.street_address) < 400) or 
+                   self.street_name in ["Hancock Pl", "W 124th St", "Manhattan Ave"] or 
+                   self.interest_a == "Hancock Park")
+        
+        if is_w125:
             self.next_stop = BUS_STOPS['NAC']
             self.intermediate = BUS_STOPS['intermediate_to_nac']
             self.previous_stop = BUS_STOPS['W125']
             return True
+        
+        # Special Case
         if int(self.street_address) == 0 and self.street_name == "St Nicholas Ave":
             if self.interest_a == "125 St":
                 self.next_stop = BUS_STOPS['NAC']
@@ -128,7 +150,10 @@ class BusRoute:
         return False
 
     def reached_ccny(self):
-        if ((150 <= int(self.street_address) <= 210)  and self.street_name == "Convent Ave") or (self.interest_a == "The City College of New York" and self.street_address == ""): # CCNY
+        is_ccny = (((150 <= int(self.street_address) <= 210)  and self.street_name == "Convent Ave") or 
+                   (self.interest_a == "The City College of New York" and self.street_address == ""))
+       
+        if is_ccny: # CCNY
             if self.previous_stop == BUS_STOPS['W125']: # going to w145
                 self.next_stop = BUS_STOPS['W145']
                 self.previous_stop = BUS_STOPS['NAC']
@@ -140,6 +165,7 @@ class BusRoute:
                 return True
         return False
     
+    # Get Previous Stop based on Previous Route
     def get_previous_stop(self):
         if self.previous_route:
             self.previous_stop = self.previous_route.previous_stop
@@ -190,6 +216,7 @@ class BusRoute:
                 self.street_address = int(self.street_address) +1
 
                 return
+    
     # Handlde any NULL values, or String values on streetaddress within the data collected
     def clean_data(self):
         if not self.street_address or self.street_address == ' ':

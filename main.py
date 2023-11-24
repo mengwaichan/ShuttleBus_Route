@@ -6,7 +6,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-# To-do
+# TODO
 # Break process_shuttle_bus() into smaller pieces
 # Add Error Handling
 #
@@ -20,6 +20,72 @@ LOCATION_OUTPUT_FILE_SUFFIX = "_location_data.csv"
 def add_data_to_firestore(collection_name, data):
     db.collection(collection_name).add(data)
 
+# Write data to CSV and Firebase
+def write_route_data(writer, route, previous_stop):
+    writer.writerow(
+        [route.datetime, 
+        route.name, 
+        route.latitude, 
+        route.longitude, 
+        route.street_address, 
+        route.street_name, 
+        route.distance,
+        route.duration,
+        previous_stop,
+        route.next_stop.name,
+        route.polyline])
+
+    # Data to be written to Firestore
+    firestore_route_data = {
+        'datetime': route.datetime,
+        'name': route.name,
+        'latitude': route.latitude,
+        'longitude': route.longitude,
+        'streetaddress': route.street_address,
+        'streetname': route.street_name,
+        'distance': route.distance,
+        'duration': route.duration,
+        'prevStop': previous_stop,
+        'nextStop': route.next_stop.name,
+        'polyline': route.polyline
+    }
+
+    # Write Route data to Firestore
+    collection_name_route = "CCNY_Shuttle_Routing"
+ #   add_data_to_firestore(collection_name_route, firestore_route_data)
+
+def write_location_data(writer, location, name):
+    # Write Location data to csv and firebase
+    writer.writerow(
+        [location.datetime.strip(), 
+        location.name.strip(), 
+        int(location.battery_status.strip()),
+        location.position_type.strip(),
+        float(location.latitude.strip()),
+        float(location.longitude.strip()),
+        location.street_address.strip(),
+        location.street_name.strip(),
+        location.area_of_interest_a.strip(),
+        location.area_of_interest_b.strip()              
+        ])
+    
+    # Data to be written to Firestore
+    firestore_location_data = {
+        'datetime' : location.datetime.strip(), 
+        'name' : location.name.strip(), 
+        'locationlatitude' : float(location.latitude.strip()),
+        'locationlongitude' : float(location.longitude.strip()),
+        'addressstreetaddress': location.street_address.strip(),
+        'addressstreetname' : location.street_name.strip(),
+        'addressareaofinteresta': location.area_of_interest_a.strip(),
+        'addressareaofinterestb': location.area_of_interest_b.strip(),
+        'batterystatus' : int(location.battery_status.strip()),
+        'locationpositiontype' : location.position_type.strip()
+    }
+
+    # Write location data to Firestore
+    collection_name_locations = name.replace(' ', '_')
+#    add_data_to_firestore(collection_name_locations, firestore_location_data)
 
 def process_shuttle_bus(name, prev_route, prev_location):
     # Retieve location Data from Airtags.csv
@@ -32,7 +98,7 @@ def process_shuttle_bus(name, prev_route, prev_location):
         writer_route = csv.writer(csv_file_route)
         writer_location = csv.writer(csv_file_location)
 
-        # Write the header row to the CSV
+        # Write header row to the CSVs
         if csv_file_route.tell() == 0:
             writer_route.writerow(
                 ['datetime', 
@@ -61,9 +127,8 @@ def process_shuttle_bus(name, prev_route, prev_location):
                      'locationpositiontype'])
         
         for i in range(len(locations)):
-            prev = prev_route[name]
             route = BusRoute(
-                prev,
+                prev_route[name],
                 locations[i].datetime.strip(), 
                 locations[i].name.strip(), 
                 float(locations[i].latitude.strip()),
@@ -85,68 +150,10 @@ def process_shuttle_bus(name, prev_route, prev_location):
             else:
                 prev_stop = route.previous_stop.name
 
-            writer_route.writerow(
-                [route.datetime, 
-                route.name, 
-                route.latitude, 
-                route.longitude, 
-                route.street_address, 
-                route.street_name, 
-                route.distance,
-                route.duration,
-                prev_stop,
-                route.next_stop.name,
-                route.polyline])
+            write_route_data(writer_route, route, prev_stop)
 
-            # Data to be written to Firestore
-            firestore_route_data = {
-               'datetime': route.datetime,
-                'name': route.name,
-                'latitude': route.latitude,
-                'longitude': route.longitude,
-                'streetaddress': route.street_address,
-                'streetname': route.street_name,
-                'distance': route.distance,
-                'duration': route.duration,
-                'prevStop': prev_stop,
-                'nextStop': route.next_stop.name,
-                'polyline': route.polyline
-            }
-
-            # Write Route data to Firestore
-            collection_name_route = "CCNY_Shuttle_Routing"
-            add_data_to_firestore(collection_name_route, firestore_route_data)
-
-
-            ## Write Location data to csv and firebase
-            writer_location.writerow(
-                [locations[i].datetime.strip(), 
-                locations[i].name.strip(), 
-                int(locations[i].battery_status.strip()),
-                locations[i].position_type.strip(),
-                float(locations[i].latitude.strip()),
-                float(locations[i].longitude.strip()),
-                locations[i].street_address.strip(),
-                locations[i].street_name.strip(),
-                locations[i].area_of_interest_a.strip(),
-                locations[i].area_of_interest_b.strip()              
-                ])
+            write_location_data(writer_location, locations[i], name)
             
-            firestore_location_data = {
-                'datetime' : locations[i].datetime.strip(), 
-                'name' : locations[i].name.strip(), 
-                'locationlatitude' : float(locations[i].latitude.strip()),
-                'locationlongitude' : float(locations[i].longitude.strip()),
-                'addressstreetaddress': locations[i].street_address.strip(),
-                'addressstreetname' : locations[i].street_name.strip(),
-                'addressareaofinteresta': locations[i].area_of_interest_a.strip(),
-                'addressareaofinterestb': locations[i].area_of_interest_b.strip(),
-                'batterystatus' : int(locations[i].battery_status.strip()),
-                'locationpositiontype' : locations[i].position_type.strip()
-            }
-
-            collection_name_locations = name.replace(' ', '_')
-            add_data_to_firestore(collection_name_locations, firestore_location_data)
 
 # HashMap to track last location and last route
 prev_route = {"CCNY Shuttle 1": None, "CCNY Shuttle 2": None, "CCNY Shuttle 3": None }
