@@ -121,6 +121,7 @@ class BusRoute:
         if is_w145:
             self.next_stop = BUS_STOPS['NAC']
             self.previous_stop = BUS_STOPS['W145']
+            self.intermediate = None
             return True
         return False
 
@@ -146,6 +147,7 @@ class BusRoute:
             else:
                 self.next_stop = BUS_STOPS['NAC']
                 self.previous_stop = BUS_STOPS['W145']
+                self.intermediate = None
                 return True
         return False
 
@@ -157,6 +159,7 @@ class BusRoute:
             if self.previous_stop == BUS_STOPS['W125']: # going to w145
                 self.next_stop = BUS_STOPS['W145']
                 self.previous_stop = BUS_STOPS['NAC']
+                self.intermediate = None
                 return True
             elif self.previous_stop == BUS_STOPS['W145']: # going to w125
                 self.next_stop = BUS_STOPS['W125']
@@ -206,7 +209,7 @@ class BusRoute:
             self.street_address = 255
             return
 
-        if (int(self.street_address) >= 630 and self.street_name == "St Nicholas Ave"):
+        if (int(self.street_address) >= 620 and self.street_name == "St Nicholas Ave"):
             if int(self.street_address) % 2 == 0:
                 new_coordinates = Geocoding()
                 result = new_coordinates.fetch_coordinates(int(self.street_address) +1, self.street_name)

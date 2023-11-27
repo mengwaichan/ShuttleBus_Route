@@ -7,9 +7,6 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 # TODO
-# Break process_shuttle_bus() into smaller pieces
-# Add Error Handling
-#
 # Use Flask to build an API to add, delete, or restrict bus stops
 
 SLEEP_TIME = 60
@@ -155,6 +152,7 @@ def process_shuttle_bus(name, prev_route, prev_location):
                      'batterystatus',
                      'locationpositiontype'])
         
+        # Create bus route and writing to csv and firebase for every location in Airtags.csv
         for i in range(len(locations)):
             route = create_bus_route(prev_route[name], locations[i])
 
