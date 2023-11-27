@@ -20,9 +20,12 @@ class Geocoding:
         else:
             print("Error:", response.json()['status'])
             return None
-       
-#test = Geocoding()
-#result = test.fetch_coordinates(685,"St Nicholas Ave")
-#lat = result['lat']
-#lng = result['lng']
-#print(lat, lng)
+
+# For testing purpose
+# To test run 'python geocoding.py' in terminal
+if __name__== '__main__':       
+    test = Geocoding()
+    result = test.fetch_coordinates(685,"St Nicholas Ave")
+    lat = result['lat']
+    lng = result['lng']
+    print(lat, lng)

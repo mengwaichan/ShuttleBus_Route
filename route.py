@@ -50,11 +50,14 @@ class Route:
         response = requests.post(self.api_url,headers=self.headers, json=route_request)  
         return response.json()
 
-### For Testing Purpose
-#fetchRoute = Route()
 
-#response_data = fetchRoute.fetch_route(40.819557163853155, -73.94991793531442, 40.82377614314247, -73.94502568555461)
-#print(response_data)
+# For Testing Purpose
+# To test run 'python route.py' in terminal
+if __name__== '__main__':
+    fetchRoute = Route()
+
+    response_data = fetchRoute.fetch_route(40.819557163853155, -73.94991793531442, 40.82377614314247, -73.94502568555461)
+    print(response_data)
 
 
 
