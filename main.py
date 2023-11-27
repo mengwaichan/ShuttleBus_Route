@@ -27,11 +27,9 @@ def add_data_to_firestore(collection_name, data):
 
 # Write data to CSV and Firebase
 def write_route_data(writer, route):
-    previous_stop
+    previous_stop = ""
     if route.previous_stop:
         previous_stop = route.previous_stop.name
-    else:
-        previous_stop = ""
 
     writer.writerow(
         [route.datetime, 
