@@ -134,8 +134,7 @@ class BusRoute:
 
     def reached_w125(self):
         is_w125 = ((100 <= int(self.street_address) <= 300 and self.street_name == "St Nicholas Ave") or 
-                   (self.street_name == "W 125th St" and int(self.street_address) < 400) or 
-                   self.street_name in ["Hancock Pl", "W 124th St", "Manhattan Ave"] or 
+                   self.street_name in ["Hancock Pl", "W 124th St", "Manhattan Ave", "W 125th St"] or 
                    self.interest_a == "Hancock Park")
         
         if is_w125:
