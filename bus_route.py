@@ -13,6 +13,7 @@ BUS_STOPS = {
     'W125': BusStop(3, "W125", 40.8103721597239, -73.95278450679731, 284, "St Nicholas Ave"),  # 284 St Nicholas Ave # W 124th St
     'intermediate_to_125': BusStop(4, "intermediate_125", 40.810976077358795, -73.95405670678701),
     'intermediate_to_nac': BusStop(5, "intermediate_nac", 40.811255, -73.953659),
+    'intermediate_145_nac': BusStop(6, "intermediate_145_nac", 40.821397, -73.946092)
 }
 
 class BusRoute:
@@ -119,10 +120,16 @@ class BusRoute:
                    self.street_name in ["W 145th St", "W 141st St"])
 
         if is_w145:
-            self.next_stop = BUS_STOPS['NAC']
-            self.previous_stop = BUS_STOPS['W145']
-            self.intermediate = None
-            return True
+            if self.street_name == "W 145th St":
+                self.next_stop = BUS_STOPS['NAC']
+                self.previous_stop = BUS_STOPS['W145']
+                self.intermediate = BUS_STOPS['intermediate_145_nac']
+                return True
+            else: 
+                self.next_stop = BUS_STOPS['NAC']
+                self.previous_stop = BUS_STOPS['W145']
+                self.intermediate = None
+                return True
         return False
 
     def reached_w125(self):
@@ -209,7 +216,7 @@ class BusRoute:
             self.street_address = 255
             return
 
-        if (int(self.street_address) >= 620 and self.street_name == "St Nicholas Ave"):
+        if (int(self.street_address) >= 630 and self.street_name == "St Nicholas Ave"):
             if int(self.street_address) % 2 == 0:
                 new_coordinates = Geocoding()
                 result = new_coordinates.fetch_coordinates(int(self.street_address) +1, self.street_name)
@@ -217,9 +224,8 @@ class BusRoute:
                 self.latitude = result['lat']
                 self.longitude = result['lng']
                 self.street_address = int(self.street_address) +1
-
                 return
-    
+            
     # Handlde any NULL values, or String values on streetaddress within the data collected
     def clean_data(self):
         if not self.street_address or self.street_address == ' ':
