@@ -114,7 +114,7 @@ def create_bus_route(prev_route, location):
     route.get_next_stop()
     route.fetch_route()
     route.delete_intermediate()
-    route.calculate_delta()
+#    route.calculate_delta()
     route.get_arrival_time()
 
     return route
