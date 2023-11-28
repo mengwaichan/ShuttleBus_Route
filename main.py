@@ -30,7 +30,8 @@ def write_route_data(writer, route):
 
     writer.writerow(
         [route.datetime, 
-        route.name, 
+        route.name,
+        route.arrival_time, 
         route.latitude, 
         route.longitude, 
         route.street_address, 
@@ -39,12 +40,14 @@ def write_route_data(writer, route):
         route.duration,
         previous_stop,
         route.next_stop.name,
+        route.delta,
         route.polyline])
 
     # Data to be written to Firestore
     firestore_route_data = {
         'datetime': route.datetime,
         'name': route.name,
+        'arrivaltime': route.arrival_time,
         'latitude': route.latitude,
         'longitude': route.longitude,
         'streetaddress': route.street_address,
@@ -53,6 +56,7 @@ def write_route_data(writer, route):
         'duration': route.duration,
         'prevStop': previous_stop,
         'nextStop': route.next_stop.name,
+        'delta': route.delta,
         'polyline': route.polyline
     }
 
@@ -110,6 +114,8 @@ def create_bus_route(prev_route, location):
     route.get_next_stop()
     route.fetch_route()
     route.delete_intermediate()
+    route.calculate_delta()
+    route.get_arrival_time()
 
     return route
     

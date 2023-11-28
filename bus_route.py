@@ -1,6 +1,8 @@
 from bus_stop import BusStop
 from route import Route
 from geocoding import Geocoding
+#from predicted_delta import Predict_Delta
+from datetime import datetime, timedelta
 
 # TODO
 # Error handling needs to be added
@@ -26,11 +28,15 @@ class BusRoute:
         self.street_address = street_address
         self.street_name = street_name
         self.interest_a = interest_a
-
+        
+        # Using arrival_time to sync across all devices when pull from firebase
+        # Use arrival_time - current_time to get the duration + delta
+        self.arrival_time = None
         # Data from Google Route API
         self.distance = None
         self.duration = None
         self.polyline = None
+        self.delta = 0
 
         # Determine Bus Direction
         # BusStop datatype
@@ -97,11 +103,11 @@ class BusRoute:
     # Handle Cases Based on where the bus is
     def skipped_stop(self):
         is_w145_route = (((210 < int(self.street_address) <= 355 and self.street_name == "Convent Ave") or 
-                          self.street_name in ["W 135th St", "W 133rd St", "W 131st St", "W 130th St", "W 129th St", "W 128th St", "W 127th St", "W 126th St"])
+                          self.street_name in ["W 140th St", "W 141st St", "W 142nd St", "W 143rd St", "W 144th St"])
                           and self.previous_route.previous_stop == BUS_STOPS['W125'])
 
         is_w125_route = (((135 >= int(self.street_address) and self.street_name == "Convent Ave") or self.street_name == "Morningside Ave" or 
-                         self.street_name in ["W 140th St", "W 141st St", "W 142nd St", "W 143rd St", "W 144th St"]) 
+                         self.street_name in ["W 135th St", "W 133rd St", "W 131st St", "W 130th St", "W 129th St", "W 128th St", "W 127th St", "W 126th St"]) 
                          and self.previous_route.previous_stop == BUS_STOPS['W145'])
 
         if is_w145_route:
@@ -248,6 +254,19 @@ class BusRoute:
         if (int(self.street_address) <= 300 and self.street_name == "St Nicholas Ave") or self.street_name in streets:
             self.intermediate = None
 
+    # Calculate Delta for more accurarte 
+    # def calculate_delta(self):
+    #     delta = Predict_Delta(self.distance, self.previous_stop.name, self.next_stop.name)
+    #     self.delta = delta
+
+    # Calculate Arrival Time datetime + duration + delta
+    def get_arrival_time(self):
+        airtag_timestamp = datetime.strptime(self.datetime, '%Y-%m-%d %H:%M:%S')
+
+        new_datetime = airtag_timestamp + timedelta(seconds = (self.duration + self.delta))
+
+        self.arrival_time = new_datetime.strftime('%Y-%m-%d %H:%M:%S')
+
     # Return Json Format of this object
     def to_json(self):
         return {
@@ -261,6 +280,8 @@ class BusRoute:
             "duration" : self.duration,
             "prev_stop": self.previous_stop.name,
             "next_stop" : self.next_stop.name,
-            "polyline" : self.polyline
+            "polyline" : self.polyline,
+            "arrival_time": self.arrival_time,
+            "delta": self.delta
         }
     
