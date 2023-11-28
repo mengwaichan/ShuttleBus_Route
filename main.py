@@ -135,6 +135,7 @@ def process_shuttle_bus(name, prev_route, prev_location):
             writer_route.writerow(
                 ['datetime', 
                 'name', 
+                'arrivaltime',
                 'latitude', 
                 'longitude', 
                 'streetaddress', 
@@ -143,6 +144,7 @@ def process_shuttle_bus(name, prev_route, prev_location):
                 'duration',
                 'prevStop',
                 'nextStop',
+                'delta',
                 'polyline'])  
 
         if csv_file_location.tell() == 0:

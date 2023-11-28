@@ -69,12 +69,12 @@ class BusRoute:
         try:
             self.distance = response['routes'][0]['distanceMeters']
         except (KeyError, IndexError):
-            self.distance = None
+            self.distance = 0
 
         try:
             self.duration = response['routes'][0]['duration']
         except (KeyError, IndexError):
-            self.duration = None
+            self.duration = 0
 
         try:
             self.polyline = response['routes'][0]['polyline']['encodedPolyline']
@@ -263,7 +263,7 @@ class BusRoute:
     def get_arrival_time(self):
         airtag_timestamp = datetime.strptime(self.datetime, '%Y-%m-%d %H:%M:%S')
 
-        new_datetime = airtag_timestamp + timedelta(seconds = (self.duration + self.delta))
+        new_datetime = airtag_timestamp + timedelta(seconds = (int(self.duration.rstrip('s')) + self.delta))
 
         self.arrival_time = new_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
