@@ -105,22 +105,27 @@ class BusRoute:
     def skipped_stop(self):
         is_w145_route = (((249 < int(self.street_address) <= 360 and self.street_name == "Convent Ave") or 
                           self.street_name in ["W 140th St", "W 141st St", "W 142nd St", "W 143rd St", "W 144th St"])
-                          and self.previous_route.previous_stop == BUS_STOPS['W125'])
+                        )
 
         is_w125_route = (((135 >= int(self.street_address) and self.street_name == "Convent Ave") or self.street_name == "Morningside Ave" or 
                          self.street_name in ["W 135th St", "W 133rd St", "W 131st St", "W 130th St", "W 129th St", "W 128th St", "W 127th St", "W 126th St"]) 
-                         and self.previous_route.previous_stop == BUS_STOPS['W145'])
+                        )
 
-        if is_w145_route:
+        if is_w145_route and self.previous_route.previous_stop == BUS_STOPS['W125']:
             self.next_stop = BUS_STOPS['W145']
             self.previous_stop = BUS_STOPS['NAC']
             return
         
         if is_w125_route:
-            self.next_stop = BUS_STOPS['W125']
-            self.previous_stop = BUS_STOPS['NAC']
-            return
-            
+            if self.previous_route.previous_stop == BUS_STOPS['W145']:
+                self.next_stop = BUS_STOPS['W125']
+                self.previous_stop = BUS_STOPS['NAC']
+                return
+            elif self.previous_route.next_stop == BUS_STOPS['W145']:
+                self.next_stop = BUS_STOPS['W125']
+                self.previous_stop = BUS_STOPS['NAC']
+                return
+    
     def reached_w145(self):
         is_w145 = ((int(self.street_address) >= 630 and self.street_name == "St Nicholas Ave") or 
                    (self.interest_a == "145 St" and self.street_address == "") or
