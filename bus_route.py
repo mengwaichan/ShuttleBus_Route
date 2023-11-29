@@ -37,6 +37,7 @@ class BusRoute:
         self.duration = None
         self.polyline = None
         self.delta = 0
+        self.duration_delta = 0
 
         # Determine Bus Direction
         # BusStop datatype
@@ -289,6 +290,8 @@ class BusRoute:
         new_datetime = airtag_timestamp + timedelta(seconds = (int(self.duration.rstrip('s')) + self.delta))
 
         self.arrival_time = new_datetime.strftime('%Y-%m-%d %H:%M:%S')
+
+        self.duration_delta = (int(self.duration.rstrip('s')) + self.delta)
 
     def overtime(self):
         current_datetime = datetime.strptime(self.datetime, "%Y-%m-%d %H:%M:%S")

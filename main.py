@@ -57,6 +57,7 @@ def write_route_data(writer, route):
         'prevStop': previous_stop,
         'nextStop': route.next_stop.name,
         'delta': route.delta,
+        'duration_delta': route.duration_delta,
         'polyline': route.polyline
     }
 
