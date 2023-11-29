@@ -79,7 +79,7 @@ class BusRoute:
         try:
             self.polyline = response['routes'][0]['polyline']['encodedPolyline']
         except (KeyError, IndexError):
-            self.polyline = None
+            self.polyline = ""
 
     # Determine Bus Next Stop
     def get_next_stop(self):
@@ -102,7 +102,7 @@ class BusRoute:
     
     # Handle Cases Based on where the bus is
     def skipped_stop(self):
-        is_w145_route = (((210 < int(self.street_address) <= 355 and self.street_name == "Convent Ave") or 
+        is_w145_route = (((249 < int(self.street_address) <= 360 and self.street_name == "Convent Ave") or 
                           self.street_name in ["W 140th St", "W 141st St", "W 142nd St", "W 143rd St", "W 144th St"])
                           and self.previous_route.previous_stop == BUS_STOPS['W125'])
 
@@ -230,7 +230,23 @@ class BusRoute:
                 self.longitude = result['lng']
                 self.street_address = int(self.street_address) +1
                 return
-            
+
+        # Add CCNY Cases
+        if(int(self.street_address) == 160 or int(self.street_address) == 200 )and self.street_name == "Convent Ave" :
+            self.latitude = 40.819557163853155
+            self.longitude = -73.94991793531442
+        if int(self.street_address) == 150 and self.street_name == "Convent Ave" :
+            self.latitude = 40.8183630579255 
+            self.longitude = -73.95096568242835
+        
+        if int(self.street_address) == 164 and self.street_name == "Convent Ave":
+            self.latitude = 40.81874083074161
+            self.longitude = -73.95056421534208
+
+        if int(self.street_address) == 240 and self.street_name == "Convent Ave":
+            self.latitude = 40.821213376345355
+            self.longitude = -73.94877793264239
+    
     # Handlde any NULL values, or String values on streetaddress within the data collected
     def clean_data(self):
         if not self.street_address or self.street_address == ' ':
@@ -267,11 +283,24 @@ class BusRoute:
 
         self.arrival_time = new_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
+    def overtime(self):
+        current_datetime = datetime.strptime(self.datetime, "%Y-%m-%d %H:%M:%S")
+        if self.previous_route:
+            previous_datetime = datetime.strptime(self.previous_route.datetime, "%Y-%m-%d %H:%M:%S")
+        else:
+            previous_datetime = current_datetime
+        time_difference = (current_datetime - previous_datetime).total_seconds()
+
+        if time_difference > 900:
+            self.polyline = ""
+            self.duration = "0s"
+            self.distance = 0
+
     # Return Json Format of this object
     def to_json(self):
         return {
             "datetime":self.datetime,
-            "name":self.name,
+            "name":self.name, 
             "latitude" :self.latitude,
             "longitude" :self.longitude,
             "street_address" : self.street_address,
