@@ -130,11 +130,13 @@ class BusRoute:
                 self.next_stop = BUS_STOPS['NAC']
                 self.previous_stop = BUS_STOPS['W145']
                 self.intermediate = BUS_STOPS['intermediate_145_nac']
+                self.delta = 180
                 return True
             else: 
                 self.next_stop = BUS_STOPS['NAC']
                 self.previous_stop = BUS_STOPS['W145']
                 self.intermediate = None
+                self.delta = 60
                 return True
         return False
 
@@ -147,6 +149,7 @@ class BusRoute:
             self.next_stop = BUS_STOPS['NAC']
             self.intermediate = BUS_STOPS['intermediate_to_nac']
             self.previous_stop = BUS_STOPS['W125']
+            self.delta = 60
             return True
         
         # Special Case
@@ -155,11 +158,13 @@ class BusRoute:
                 self.next_stop = BUS_STOPS['NAC']
                 self.intermediate = BUS_STOPS['intermediate_to_nac']
                 self.previous_stop = BUS_STOPS['W125']
+                self.delta = 60
                 return True
             else:
                 self.next_stop = BUS_STOPS['NAC']
                 self.previous_stop = BUS_STOPS['W145']
                 self.intermediate = None
+                self.delta = 180
                 return True
         return False
 
@@ -172,11 +177,13 @@ class BusRoute:
                 self.next_stop = BUS_STOPS['W145']
                 self.previous_stop = BUS_STOPS['NAC']
                 self.intermediate = None
+                self.delta = 240
                 return True
             elif self.previous_stop == BUS_STOPS['W145']: # going to w125
                 self.next_stop = BUS_STOPS['W125']
                 self.intermediate = BUS_STOPS['intermediate_to_125']
                 self.previous_stop = BUS_STOPS['NAC']
+                self.delta = 240
                 return True
         return False
     
