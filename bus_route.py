@@ -306,7 +306,7 @@ class BusRoute:
             previous_datetime = current_datetime
         time_difference = (current_datetime - previous_datetime).total_seconds()
 
-        if time_difference > 840:
+        if time_difference > 900:
             self.polyline = ""
             self.duration = "0s"
             self.distance = 0
