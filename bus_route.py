@@ -15,7 +15,7 @@ BUS_STOPS = {
     'W125': BusStop(3, "W125", 40.8103721597239, -73.95278450679731, 284, "St Nicholas Ave"),  # 284 St Nicholas Ave # W 124th St
     'intermediate_to_125': BusStop(4, "intermediate_125", 40.810976077358795, -73.95405670678701),
     'intermediate_to_nac': BusStop(5, "intermediate_nac", 40.811255, -73.953659),
-    'intermediate_145_nac': BusStop(6, "intermediate_145_nac", 40.821397, -73.946092)
+    'intermediate_145_nac': BusStop(6, "intermediate_145_nac", 40.821392729005844, -73.9463009155883)
 }
 
 class BusRoute:
@@ -127,7 +127,7 @@ class BusRoute:
                 return
     
     def reached_w145(self):
-        is_w145 = ((int(self.street_address) >= 630 and self.street_name == "St Nicholas Ave") or 
+        is_w145 = ((int(self.street_address) >= 600 and self.street_name == "St Nicholas Ave") or 
                    (self.interest_a == "145 St" and self.street_address == "") or
                    self.street_name in ["W 145th St", "W 141st St"])
 
@@ -306,7 +306,7 @@ class BusRoute:
             previous_datetime = current_datetime
         time_difference = (current_datetime - previous_datetime).total_seconds()
 
-        if time_difference > 900:
+        if time_difference > 840:
             self.polyline = ""
             self.duration = "0s"
             self.distance = 0
