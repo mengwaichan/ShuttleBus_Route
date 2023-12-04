@@ -1,5 +1,6 @@
 import csv
 
+# Airtag object 
 class AirTag:
     def __init__(self,
                  datetime,
@@ -33,7 +34,18 @@ class AirTag:
             "streetName": self.street_name
         }
 
+"""
+Retrieve unique Airtag data points for a specific shuttle bus.
+
+Args:
+    shuttle_bus (str): Name of the shuttle bus.
+    prev_location (dict): Dictionary of previous Airtag locations for each shuttle bus.
+
+Returns:
+    list: List of AirTag instances representing unique data points.
+"""
 class Airtags:
+    @staticmethod
     def get_airtags(shuttle_bus, prev_location):
         airtags = []
 
@@ -69,7 +81,9 @@ class Airtags:
                     prev_address, prev_name = street_address, street_name
                     if location:
                         prev_location[shuttle_bus] = location
-                        
+        
+        # Erase all data on Airtags.csv 
+        # By erasing all data this program will only read the newest entries 
         if shuttle_bus == "CCNY Shuttle 3":
             with open("Airtags.csv", "w", newline='', encoding="utf-8") as file:
                 writer = csv.writer(file)
