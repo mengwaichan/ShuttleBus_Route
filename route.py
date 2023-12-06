@@ -90,7 +90,7 @@ class Route:
 if __name__== '__main__':
     fetchRoute = Route()
 
-    response_data = fetchRoute.fetch_route(40.819557163853155, -73.94991793531442, 40.82377614314247, -73.94502568555461)
+    response_data = fetchRoute.fetch_route(40.8183630579255,-73.95096568242835, 40.82377614314247, -73.94502568555461, 40.821385, -73.948542)
     print(response_data)
 
 

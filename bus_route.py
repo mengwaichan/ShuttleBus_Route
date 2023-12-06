@@ -190,6 +190,9 @@ class BusRoute:
         if (int(self.street_address) <= 300 and self.street_name == "St Nicholas Ave") or self.street_name in streets:
             self.intermediate = None
 
+        if(self.next_stop.name == "W145"):
+            self.intermediate = None
+
     # Calculate Delta for more accurarte 
     # def calculate_delta(self):
     #     delta = Predict_Delta(self.distance, self.previous_stop.name, self.next_stop.name)
@@ -213,6 +216,12 @@ class BusRoute:
         else:
             previous_datetime = current_datetime
         self.time_difference = (current_datetime - previous_datetime).total_seconds()
+
+    def not_in_range(self):
+        if self.distance > 1700:
+            self.polyline = ""
+            self.duration = 0
+            self.delta = 0
 
     # Return Json Format of this object
     def to_json(self):

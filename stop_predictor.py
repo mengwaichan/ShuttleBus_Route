@@ -25,7 +25,8 @@ BUS_STOPS = {
     'W125': BusStop(3, "W125", 40.8103721597239, -73.95278450679731, 284, "St Nicholas Ave"),  # 284 St Nicholas Ave # W 124th St
     'intermediate_to_125': BusStop(4, "intermediate_125", 40.810976077358795, -73.95405670678701),
     'intermediate_to_nac': BusStop(5, "intermediate_nac", 40.811255, -73.953659),
-    'intermediate_145_nac': BusStop(6, "intermediate_145_nac", 40.821392729005844, -73.9463009155883)
+    'intermediate_145_nac': BusStop(6, "intermediate_145_nac", 40.821392729005844, -73.9463009155883),
+    'intermediate_nac_145': BusStop(7, "intermediate_nac_145", 40.821385, -73.948542)
 }
 
 class StopPredictor:
@@ -117,6 +118,13 @@ class StopPredictor:
                 self.intermediate = None
                 self.delta = 180
                 return True
+            
+        if int(self.street_address) <= 157 and self.street_name == "Morningside Ave" and self.previous_stop == ['NAC']:
+            self.next_stop = BUS_STOPS['NAC']
+            self.intermediate = BUS_STOPS['intermediate_to_nac']
+            self.previous_stop = BUS_STOPS['W125']
+            self.delta = 60
+            return True
         return False
 
     def reached_ccny(self):
@@ -124,10 +132,23 @@ class StopPredictor:
                    (self.interest_a == "The City College of New York" and self.street_address == ""))
        
         if is_ccny: # CCNY
+            if 780 <= self.time_difference <= 1020:
+                if self.previous_route.next_stop == BUS_STOPS['W125']: # going to w145
+                    self.next_stop = BUS_STOPS['W145']
+                    self.previous_stop = BUS_STOPS['NAC']
+                    self.intermediate = BUS_STOPS['intermediate_nac_145']
+                    self.delta = 240
+                    return True
+                elif self.previous_route.next_stop == BUS_STOPS['W145']: # going to w125
+                    self.next_stop = BUS_STOPS['W125']
+                    self.intermediate = BUS_STOPS['intermediate_to_125']
+                    self.previous_stop = BUS_STOPS['NAC']
+                    self.delta = 240
+                    return True
             if self.previous_stop == BUS_STOPS['W125']: # going to w145
                 self.next_stop = BUS_STOPS['W145']
                 self.previous_stop = BUS_STOPS['NAC']
-                self.intermediate = None
+                self.intermediate = BUS_STOPS['intermediate_nac_145']
                 self.delta = 240
                 return True
             elif self.previous_stop == BUS_STOPS['W145']: # going to w125

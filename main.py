@@ -20,6 +20,9 @@ Usage:
 
 # TODO
 # Use Flask to build an API to add, delete, or restrict bus stops
+# If distance is over n do not display polyline and time
+# If time_difference over 20 minutes erase polyline
+# If time_difference is 13 - 18 minutes assume the bus has moved 2 stops
 """
 
 SLEEP_TIME = 60
@@ -168,11 +171,12 @@ def create_bus_route(prev_route, location):
         location.area_of_interest_a.strip()
     )
 
-    route.get_next_stop()
     route.get_time_difference()
+    route.get_next_stop()
     route.fetch_route()
     route.delete_intermediate()
     # route.calculate_delta()
+    route.not_in_range()
     route.get_arrival_time()
 
     return route
