@@ -35,6 +35,8 @@ This project is a bus route predictor that utilizes Airtag data and Google Maps 
 1. Modify the configuration files:
 
     - Replace `Constants.MAP_API_KEY` in `route.py` and `geocoding.py` with your Google Maps API key.
+        -   Ensure Google Maps Geocoding API is enabled 
+        -   Ensure Google Maps Routes API is enabled
     - Set up Firebase Authentication:
         - Create a `firebase_auth.json` file with your Firebase authentication credentials.
         - Ensure this file is kept secure and not shared publicly.

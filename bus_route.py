@@ -92,7 +92,7 @@ class BusRoute:
         try:
             self.duration = response['routes'][0]['duration']
         except (KeyError, IndexError):
-            self.duration = 0
+            self.duration = "0s"
 
         try:
             self.polyline = response['routes'][0]['polyline']['encodedPolyline']
@@ -220,7 +220,7 @@ class BusRoute:
     def not_in_range(self):
         if self.distance > 1700:
             self.polyline = ""
-            self.duration = 0
+            self.duration = "0s"
             self.delta = 0
 
     # Return Json Format of this object
