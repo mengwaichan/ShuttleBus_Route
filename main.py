@@ -18,13 +18,33 @@ Usage:
 - Set up Firestore credentials in 'Firebase_auth.json'.
 - Run the script to start tracking CCNY Shuttles.
 
-# TODO
-# Use Flask to build an API to add, delete, or restrict bus stops
+Attributes:
+    SLEEP_TIME (int): The time interval (in seconds) between data processing cycles.
+    ROUTE_OUTPUT_FILE_SUFFIX (str): The suffix for the route data CSV file, including the current date.
+    LOCATION_OUTPUT_FILE_SUFFIX (str): The suffix for the location data CSV file, including the current date.
+
+Methods:
+    initialize_firestore: Initialize the Firestore client using credentials from 'Firebase_auth.json'.
+    add_data_to_firestore: Add data to Firestore.
+    write_route_data: Write route data to a CSV file and Firestore.
+    write_location_data: Write location data to a CSV file and Firestore.
+    create_bus_route: Create a BusRoute instance from previous route data and a new location.
+    process_shuttle_bus: Process Airtags data, generate routes, and write to CSV and Firestore.
+
+Globals:
+    SLEEP_TIME (int): The time interval (in seconds) between data processing cycles.
+    ROUTE_OUTPUT_FILE_SUFFIX (str): The suffix for the route data CSV file, including the current date.
+    LOCATION_OUTPUT_FILE_SUFFIX (str): The suffix for the location data CSV file, including the current date.
+    prev_route (dict): Dictionary of previous BusRoute instances for each shuttle bus.
+    shuttle_buses (list): List of shuttle bus names.
+    prev_location (dict): Dictionary of previous Airtags Location instances for each shuttle bus.
+    db (google.cloud.firestore.Client): Firestore client instance.
+
 """
 
 SLEEP_TIME = 60
-ROUTE_OUTPUT_FILE_SUFFIX = "_route_data.csv"
-LOCATION_OUTPUT_FILE_SUFFIX = "_location_data.csv"
+ROUTE_OUTPUT_FILE_SUFFIX = "_route_data_{datetime.now().strftime('%m_%d')}.csv"
+LOCATION_OUTPUT_FILE_SUFFIX = "_location_data_{datetime.now().strftime('%m_%d')}.csv"
 
 def initialize_firestore():
     """

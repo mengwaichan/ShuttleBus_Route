@@ -15,6 +15,10 @@ Example:
     route = Route()
     response_data = route.fetch_route(40.819557163853155, -73.94991793531442, 40.82377614314247, -73.94502568555461)
 """
+
+# Future Suggestion change "travelMode": "WALK" and remove "routingPreference" to reduce api cost, then
+# Train Machine Learning Model to reduce the API duration 
+
 class Route:
     def __init__(self):
         """
