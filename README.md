@@ -4,6 +4,8 @@
 
 This project is a bus route predictor that utilizes Airtag data and Google Maps API to determine the next bus stop. It includes modules for fetching route data, geocoding, and predicting the next bus stop based on the current location.
 
+**Note:** The corresponding frontend for this project can be found [here](https://github.com/MarkusCDev/TagIT.git).
+
 ## Table of Contents
 
 - [Installation](#installation)
@@ -67,5 +69,5 @@ For detailed documentation on each module and class, refer to the docstrings in 
 - `Route`: Fetches route data using the Google Maps Directions API.
 - `Geocoding`: Fetches coordinates based on a street address using the Google Maps Geocoding API.
 - `BusStop`: Represents a bus stop object with relevant information.
-- `BusRoute`: Predicts the next bus stop and calculates route information.
+- `BusRoute`: Predicts the shuttle bus route and retrieve arrival time for each bus
 - `StopPredictor`: Predicts the next bus stop based on current location, previous route, and other factors.
