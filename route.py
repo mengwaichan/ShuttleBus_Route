@@ -14,7 +14,6 @@ Methods:
 Example:
     route = Route()
     response_data = route.fetch_route(40.819557163853155, -73.94991793531442, 40.82377614314247, -73.94502568555461)
-    print(response_data)
 """
 class Route:
     def __init__(self):
@@ -90,7 +89,16 @@ class Route:
 if __name__== '__main__':
     fetchRoute = Route()
 
-    response_data = fetchRoute.fetch_route(40.8183630579255,-73.95096568242835, 40.82377614314247, -73.94502568555461, 40.821385, -73.948542)
+    origin_latitude = 40.8103721597239 
+    origin_longitude = -73.95278450679731
+
+    destination_latitude = 40.819557163853155
+    destination_longitude = -73.94991793531442
+    
+    intermediates_latitude = None
+    intermediates_longitude = None
+    
+    response_data = fetchRoute.fetch_route(origin_latitude, origin_longitude, destination_latitude, destination_longitude, intermediates_latitude, intermediates_longitude)
     print(response_data)
 
 

@@ -9,15 +9,26 @@ from stop_predictor import StopPredictor
 A class to represent a bus route with information from Airtags and Google Maps API.
 
 Attributes:
-    previous_route (BusRoute): The previous route object for synchronization.
-    datetime (str): The timestamp of the Airtag data.
-    name (str): The name of the bus.
-    latitude (float): The latitude coordinate of the bus.
-    longitude (float): The longitude coordinate of the bus.
-    street_address (str): The street address of the bus location.
-    street_name (str): The name of the street where the bus is located.
-    interest_a (str): Area of interest for route prediction.
+    Inputs:
+    - previous_route (BusRoute): The previous route object for prediction.
+    - datetime (str): The timestamp of the Airtag data.
+    - name (str): The name of the bus.
+    - latitude (float): The latitude coordinate of the bus.
+    - longitude (float): The longitude coordinate of the bus.
+    - street_address (str): The street address of the bus location.
+    - street_name (str): The name of the street where the bus is located.
+    - interest_a (str): Area of interest for route prediction.
 
+    Outputs:
+    - arrival_time (str): The calculated arrival time at the next bus stop.
+    - distance (int): The distance of the route.
+    - duration (str): The estimated duration of the route.
+    - polyline (str): The polyline representation of the route.
+    - delta (int): The calculated delta for more accurate predictions.
+    - duration_delta (int): The duration with added delta.
+    - next_stop (BusStop): The next busstop object.
+    - previous_stop (BusStop): The previous busstop object.
+    
 Methods:
     fetch_route: Fetches the route information from the Google Maps API.
     get_next_stop: Determines the next bus stop using a StopPredictor.
@@ -26,6 +37,7 @@ Methods:
     delete_intermediate: Clears any intermediate stops that are not supposed to be on the route.
     get_arrival_time: Calculates the arrival time based on duration and delta.
     get_time_difference: Calculates the time difference between current and previous Airtag timestamps.
+    not_in_range: Clear all polylines and duration if the bus is not range
     to_json: Returns a JSON representation of the BusRoute object.
 """
 

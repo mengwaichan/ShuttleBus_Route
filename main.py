@@ -11,18 +11,15 @@ CCNY Shuttle Tracking Script
 
 This script processes location data from Airtags and generates bus routes for CCNY Shuttles.
 It writes the route and location data to CSV files and stores them in Firestore.
-The script runs continuously, updating the data every minute.
+The script runs continuously, reading new data every minute.
 
 Usage:
-- Ensure the required Python packages are installed (Firebase, Airtags, Flask).
+- Ensure the required Python packages are installed (Firebase).
 - Set up Firestore credentials in 'Firebase_auth.json'.
 - Run the script to start tracking CCNY Shuttles.
 
 # TODO
 # Use Flask to build an API to add, delete, or restrict bus stops
-# If distance is over n do not display polyline and time
-# If time_difference over 20 minutes erase polyline
-# If time_difference is 13 - 18 minutes assume the bus has moved 2 stops
 """
 
 SLEEP_TIME = 60

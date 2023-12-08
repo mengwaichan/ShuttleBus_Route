@@ -14,11 +14,7 @@ Methods:
 Example:
     geocoder = Geocoding()
     result = geocoder.fetch_coordinates(685, "St Nicholas Ave")
-    if result:
-        lat, lng = result['lat'], result['lng']
-        print(f"Latitude: {lat}, Longitude: {lng}")
-    else:
-        print("Failed to fetch coordinates.")
+    lat, lng = result['lat'], result['lng']
 """
 class Geocoding:
     def __init__(self):
