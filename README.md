@@ -10,12 +10,28 @@ This project is currently live and running at [ccnyshuttle.com](https://ccnyshut
 
 ## Table of Contents
 
+- [Requirements](#macos-requirements)
 - [Installation](#installation)
 - [Firebase Authentication](#firebase-authentication)
 - [CSV Data Format](#csv-data-format)
 - [Usage](#usage)
 - [Documentation](#documentation)
-- [Contributions](#Contributions)
+- [Contributions](#contributions)
+
+## MacOS Requirements
+
+- MacOS Version: `Monterey`, `Ventura`, or `Sonoma`
+- Package Manager: `Brew`
+    - Installation: (https://brew.sh/)
+      
+- JSON Processor: `JQ`
+    - `brew install jq`
+      
+- Python: Either Python or Python3 works
+    - `brew install python`
+      
+- Terminal Access: Ensure Terminal has `Full Disk Access` in the `Privacy & Security` settings in MacOS
+
 
 ## Installation
 
@@ -31,12 +47,18 @@ This project is currently live and running at [ccnyshuttle.com](https://ccnyshut
     ```bash
     pip install -r requirements.txt
     ```
+    
+3. Permissions:
+    ```bash
+    chmod 700 tagit.sh
+    ```
+
 
 ## Firebase Authentication
 
 1. Create a Firebase project: [Firebase Console](https://console.firebase.google.com/).
 2. Navigate to Project Settings.
-3. Under the "Service accounts" tab, generate a new private key.
+3. Under the `Service accounts` tab, generate a new private key.
 4. Save the generated JSON key file as `firebase_auth.json` in the root of your project.
 5. Ensure `firebase_auth.json` is added to your project's `.gitignore` file to avoid accidental commits.
 
@@ -75,14 +97,28 @@ Ensure that your CSV files adhere to this structure for accurate processing by t
 
 2. Run the main program:
 
+    - Open: `FindMy` Application
+  
+    - Open Terminal: 
+        ```bash
+        ./tagit.sh & python main.py
+        ```
+    - Ensure: `FindMy` is in the foreground, and the script is the background
+
+3. To kill bash tagit.sh script:
     ```bash
-    python main.py
+    pkill -f tagit.sh
     ```
 
 ## Documentation
 
 For detailed documentation on each module and class, refer to the docstrings in the source code. Here's a brief overview:
+### Bash
+- `tagit.sh`: Copies `Items.data` from `FindMy` Application cache and creates a csv record `Airtag.csv` for python main.py script to parse from.
 
+    - How it Works: The application's cache temporary storage of the airtag data is overwritten when updates occur from either `Crowd Sourcing` or `Owner` connection to the airtag in a nearby vacinity. `Crowd Sourcing` updates only occur if an Iphone user is within 100ft and has both `bluetooth` and `FindMy` enabled. 
+
+### Python
 - `AirTag`: Represents an Airtag object with methods for converting data to JSON.
 - `Airtags`: Retrieves unique data points from the Airtags CSV file.
 - `Route`: Fetches route data using the Google Maps Route API.
@@ -90,6 +126,10 @@ For detailed documentation on each module and class, refer to the docstrings in 
 - `BusStop`: Represents a bus stop object with relevant information.
 - `BusRoute`: Predicts the shuttle bus route and retrieve arrival time for each shuttle bus
 - `StopPredictor`: Predicts the next bus stop based on current location, previous route, and other factors.
+
+## Limitations
+
+- Updates: Airtag updates occur on average every 3 minutes. Outliers do occur and gaps up to 15 minutes can occur when lack of crowd sorucing.
 
 ## Contributions
 
