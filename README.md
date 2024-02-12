@@ -92,7 +92,7 @@ Ensure that your CSV files adhere to this structure for accurate processing by t
     - Set up Firebase Authentication:
         - Create a `firebase_auth.json` file with your Firebase authentication credentials.
         - Ensure this file is kept secure and not shared publicly.
-        - Tutorial can be found here [Firebase Aithentication](https://firebase.google.com/docs/admin/setup?hl=en&authuser=0#python)
+        - Tutorial can be found here [Firebase Authentication](https://firebase.google.com/docs/admin/setup?hl=en&authuser=0#python)
 
     - Adjust other constants or configurations based on your requirements.
 
