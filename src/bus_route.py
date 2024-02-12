@@ -1,9 +1,9 @@
-from bus_stop import BusStop
-from route import Route
-from geocoding import Geocoding
+from src.bus_stop import BusStop
+from src.route import Route
+from src.geocoding import Geocoding
 # from predict_delta import Predict_Delta
 from datetime import datetime, timedelta
-from stop_predictor import StopPredictor
+from src.stop_predictor import StopPredictor
 
 """
 A class to represent a bus route with information from Airtags and Google Maps API.

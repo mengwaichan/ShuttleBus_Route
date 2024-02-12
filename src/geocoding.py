@@ -1,6 +1,8 @@
 import requests
-import Constants
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 """
 A class for geocoding street addresses to geographical coordinates using the Google Maps Geocoding API.
 
@@ -22,7 +24,7 @@ class Geocoding:
         Initializes the Geocoding class with the API URL and key.
         """
         self.api_url = "https://maps.googleapis.com/maps/api/geocode/json"
-        self.api_key = Constants.MAP_API_KEY
+        self.api_key = os.getenv('MAP_API_KEY')
     
     def fetch_coordinates(self, street_address, street_name, city = "New York", state = "NY"):
         """

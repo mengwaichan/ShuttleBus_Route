@@ -55,7 +55,7 @@ class Airtags:
             prev_address = prev_location[shuttle_bus].street_address
             prev_name = prev_location[shuttle_bus].street_name
 
-        with open("Airtags.csv", encoding="utf-8") as file:
+        with open("./Airtags.csv", encoding="utf-8") as file:
             reader = csv.reader(file, delimiter=",")
             header = next(reader)
 
@@ -85,7 +85,7 @@ class Airtags:
         # Erase all data on Airtags.csv 
         # By erasing all data this program will only read the newest entries 
         if shuttle_bus == "CCNY Shuttle 3":
-            with open("Airtags.csv", "w", newline='', encoding="utf-8") as file:
+            with open("./Airtags.csv", "w", newline='', encoding="utf-8") as file:
                 writer = csv.writer(file)
                 writer.writerow(header)
 

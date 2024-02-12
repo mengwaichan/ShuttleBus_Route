@@ -1,4 +1,4 @@
-from bus_stop import BusStop
+from src.bus_stop import BusStop
 """
 A class to predict the next bus stop based on Airtag data.
 

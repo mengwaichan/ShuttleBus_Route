@@ -1,5 +1,9 @@
 import requests
-import Constants
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
 """
 A class to interact with the Google Maps Directions API for computing routes.
 
@@ -27,7 +31,7 @@ class Route:
         Sets up the API URL, API key, and headers for API requests.
         """
         self.api_url = "https://routes.googleapis.com/directions/v2:computeRoutes"
-        self.api_key = Constants.MAP_API_KEY
+        self.api_key = os.getenv('MAP_API_KEY')
 
         # Define header for api request
         self.headers = {"Content-Type": "application/json", 

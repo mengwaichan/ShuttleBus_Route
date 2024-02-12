@@ -1,3 +1,4 @@
 requests
 firebase_admin
 joblib
+python-dotenv

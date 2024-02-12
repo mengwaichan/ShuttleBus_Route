@@ -1,7 +1,6 @@
 # ignore all .csv file
 __pycache__/
 *.csv
-Constants.py
 .env
 DailyAirtagData/
 *.json

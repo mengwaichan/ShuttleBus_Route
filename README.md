@@ -86,7 +86,7 @@ Ensure that your CSV files adhere to this structure for accurate processing by t
 
 1. Modify the configuration files:
 
-    - Replace `Constants.MAP_API_KEY` in `route.py` and `geocoding.py` with your Google Maps API key.
+    - Create `MAP_API_KEY` in .env for `route.py` and `geocoding.py` with your Google Maps API key.
         -   Ensure Google Maps Geocoding API is enabled 
         -   Ensure Google Maps Routes API is enabled
     - Set up Firebase Authentication:

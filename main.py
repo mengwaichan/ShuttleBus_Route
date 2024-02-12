@@ -1,7 +1,8 @@
 import csv
+import datetime
 import time
-from airtags import Airtags
-from bus_route import BusRoute
+from src.airtags import Airtags
+from src.bus_route import BusRoute
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -43,8 +44,8 @@ Globals:
 """
 
 SLEEP_TIME = 60
-ROUTE_OUTPUT_FILE_SUFFIX = "_route_data_{datetime.now().strftime('%m_%d')}.csv"
-LOCATION_OUTPUT_FILE_SUFFIX = "_location_data_{datetime.now().strftime('%m_%d')}.csv"
+ROUTE_OUTPUT_FILE_SUFFIX = f'_route_data_{datetime.datetime.now().strftime("%m_%d")}.csv'
+LOCATION_OUTPUT_FILE_SUFFIX = f'_location_data_{datetime.datetime.now().strftime("%m_%d")}.csv'
 
 def initialize_firestore():
     """
